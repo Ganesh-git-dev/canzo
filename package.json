@@ -1,0 +1,23 @@
+{
+  "name": "canzo",
+  "version": "1.0.0",
+  "description": "College canteen pre-ordering web app for EASA College",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx serve . -p 8000",
+    "seed": "node seed-database.js",
+    "update-menu": "node update-menu.js",
+    "setup": "node setup-firebase.js",
+    "deploy:rules": "firebase deploy --only firestore:rules --project canzo-459ad"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ganesh-git-dev/canzo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "firebase-admin": "^13.0.0"
+  }
+}

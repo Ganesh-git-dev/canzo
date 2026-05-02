@@ -10,7 +10,7 @@
 
 ---
 
-## Current Status: Firebase Migrated
+## Current Status: Firebase Migrated + Seeded
 
 - [x] Marketing landing page with GSAP scroll animations + loading screen
 - [x] "Get Started" links directly to student registration (no role modal)
@@ -19,21 +19,21 @@
 - [x] Real-time order sync across all tabs via Firestore `onSnapshot` listeners
 - [x] Real-time menu sync — admin CRUD reflects instantly on student menu
 - [x] Role-based routing (student vs canteen) enforced via Firestore user docs
-- [x] Firestore security rules — students create orders, canteen manages menu/orders
 - [x] Pre-seeded database: 18 menu items, 1 student user, 1 admin user, canteen settings
 - [x] Student profile: register number, department, year, phone, balance tracking
 - [x] Order details: bill number, line items, tax, payment status, student metadata
 - [x] Student stats auto-update on checkout (totalOrders, totalSpent)
-- [x] Student checkout creates real Firestore documents → canteen live queue updates instantly
 - [x] Canteen dashboard with live order queue, stats, analytics
 - [x] Canteen menu management (CRUD + stock toggles) with Firestore
 - [x] Dark mode toggle (all pages, persists to localStorage)
 - [x] Cart persistence via localStorage (client-only state)
-- [x] Menu search + category tabs + filtering
+- [x] Menu search + category tabs + filtering (18 items)
 - [x] Order history + active orders for students
 - [x] Canteen analytics: revenue chart, top-selling items, student frequency
 - [x] Mobile responsive (sidebar toggle, stacked layouts, form rows collapse)
 - [x] Single canteen scope: "Food Court" at EASA College (Near Mess)
+- [x] Automated seed script (no manual Firebase Console setup needed)
+- [ ] Deploy Firestore security rules (1 manual step remaining)
 
 ---
 
@@ -318,32 +318,40 @@ Menu: canteen CRUD (Firestore) → student menu updates via onSnapshot listener
 
 ## How to Set Up Firebase
 
-### 1. Create Firebase Project
+### 1. Create Firebase Project (if not done)
 1. Go to [Firebase Console](https://console.firebase.google.com/)
-2. Create project named `canzo`
+2. Create project named `canzo-459ad` (or update `js/firebase-config.js` with your project ID)
 3. Enable **Email/Password** Authentication
 4. Create **Firestore Database** in test mode
 
-### 2. Apply Security Rules
-Copy contents of `firestore.rules` into Firestore → Rules tab
+### 2. Seed the Database (Automated)
+```bash
+npm run seed
+```
+This creates:
+- **Student:** `student@ecet.com` / `student123`
+- **Admin:** `admin@ecet.com` / `admin123`
+- 18 menu items with categories, tags, and pricing
+- Canteen settings (Food Court config)
 
-### 3. Seed the Database
-1. Serve the project locally: `python -m http.server 8000`
-2. Visit `http://localhost:8000/seed.html`
-3. Click **"Seed Database"**
-4. This creates:
-   - **Student:** `student@ecet.com` / `student123`
-   - **Admin:** `admin@ecet.com` / `admin123`
-   - 18 menu items (biryani, burgers, noodles, drinks, etc.)
-   - Canteen settings (Food Court config)
+### 3. Deploy Firestore Security Rules
+1. Go to [Firestore Rules](https://console.firebase.google.com/project/canzo-459ad/firestore/rules)
+2. Paste contents of `firestore.rules`
+3. Click **Publish**
+
+Or via CLI:
+```bash
+firebase login
+firebase deploy --only firestore:rules --project canzo-459ad
+```
 
 ### 4. Verify
-- Login as student: `student@ecet.com` → `dashboard.html`
-- Login as admin: `admin@ecet.com` → `canteen-dashboard.html`
-- Menu page should show 18 items
-
-### 5. Configure API Keys
-Update `js/firebase-config.js` with your Firebase project config
+```bash
+npm start
+```
+Visit `http://localhost:8000`
+- Login as student: `student@ecet.com` / `student123`
+- Login as admin: `admin@ecet.com` / `admin123`
 
 ---
 
