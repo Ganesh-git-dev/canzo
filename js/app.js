@@ -1148,26 +1148,32 @@ function renderStudentOrders(activeList) {
     const activeOrders = allOrders.filter(o => ['pending', 'accepted', 'preparing', 'ready'].includes(o.status));
     const historyOrders = allOrders.filter(o => ['picked', 'cancelled'].includes(o.status));
 
-    activeList.innerHTML = '';
     const historyList = document.querySelector('.order-history-list');
+
+    activeList.innerHTML = '';
     if (historyList) historyList.innerHTML = '';
 
     if (activeOrders.length === 0) {
-        activeList.innerHTML = '<p class="empty-orders-text">No active orders</p>';
+        activeList.innerHTML = '<div class="order-empty-state">No active orders</div>';
     } else {
         const statusLabels = { pending: 'Pending', accepted: 'Accepted', preparing: 'Preparing', ready: 'Ready for Pickup' };
+        const statusIcons = {
+            pending: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+            accepted: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+            preparing: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+            ready: '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>',
+        };
         activeOrders.forEach(order => {
             const div = document.createElement('div');
             div.className = 'order-card';
+            const timeStr = new Date(order.createdAt?.seconds ? order.createdAt.seconds * 1000 : order.createdAt).toLocaleString();
             div.innerHTML = `
-                <div class="order-card-status ${order.status}">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                </div>
+                <div class="order-card-status ${order.status}">${statusIcons[order.status] || statusIcons.pending}</div>
                 <div class="order-card-info">
-                    <h4>${order.canteen}</h4>
-                    <p class="order-card-id">${order.id.slice(-6)}</p>
-                    <p class="order-card-items">${order.items.map(i => `${i.qty}x ${i.name}`).join(', ')}</p>
-                    <p class="order-card-time">${new Date(order.createdAt?.seconds ? order.createdAt.seconds * 1000 : order.createdAt).toLocaleString()} · ${order.slot}</p>
+                    <h4>${order.canteen || 'Food Court'}</h4>
+                    <p class="order-card-id">#${order.id.slice(-4)} · ${order.billNumber || ''}</p>
+                    <p class="order-card-items">${order.items.map(i => `${i.name} ×${i.qty}`).join(', ')}</p>
+                    <p class="order-card-time">${timeStr} · ${order.slot}</p>
                 </div>
                 <div class="order-card-total">
                     <span class="order-card-badge ${order.status}">${statusLabels[order.status] || order.status}</span>
@@ -1180,23 +1186,26 @@ function renderStudentOrders(activeList) {
 
     if (historyList) {
         if (historyOrders.length === 0) {
-            historyList.innerHTML = '<p class="empty-orders-text">No order history</p>';
+            historyList.innerHTML = '<div class="order-empty-state">No order history</div>';
         } else {
             historyOrders.forEach(order => {
                 const div = document.createElement('div');
                 div.className = 'order-card';
+                const timeStr = new Date(order.createdAt?.seconds ? order.createdAt.seconds * 1000 : order.createdAt).toLocaleString();
+                const badgeClass = order.status === 'picked' ? 'delivered' : 'cancelled';
+                const badgeLabel = order.status === 'picked' ? 'Delivered' : 'Cancelled';
                 div.innerHTML = `
-                    <div class="order-card-status ${order.status}">
-                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <div class="order-card-status ${badgeClass}">
+                        ${order.status === 'picked' ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>' : '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'}
                     </div>
                     <div class="order-card-info">
-                        <h4>${order.canteen}</h4>
-                        <p class="order-card-id">${order.id.slice(-6)}</p>
-                        <p class="order-card-items">${order.items.map(i => `${i.qty}x ${i.name}`).join(', ')}</p>
-                        <p class="order-card-time">${new Date(order.createdAt?.seconds ? order.createdAt.seconds * 1000 : order.createdAt).toLocaleString()}</p>
+                        <h4>${order.canteen || 'Food Court'}</h4>
+                        <p class="order-card-id">#${order.id.slice(-4)} · ${order.billNumber || ''}</p>
+                        <p class="order-card-items">${order.items.map(i => `${i.name} ×${i.qty}`).join(', ')}</p>
+                        <p class="order-card-time">${timeStr}</p>
                     </div>
                     <div class="order-card-total">
-                        <span class="order-card-badge ${order.status}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
+                        <span class="order-card-badge ${badgeClass}">${badgeLabel}</span>
                         <span class="order-card-amount">₹${order.total}</span>
                     </div>
                 `;
@@ -1210,7 +1219,7 @@ function renderStudentOrders(activeList) {
 }
 
 function initStudentOrders() {
-    const activeList = document.querySelector('.order-list');
+    const activeList = document.querySelector('.content-card:first-child .order-list, .order-list:not(.order-history-list)');
     if (!activeList) return;
     renderStudentOrders(activeList);
 }
