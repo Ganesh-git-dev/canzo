@@ -652,10 +652,20 @@ window.handleRegister = handleRegister;
 window.handleGoogleLogin = handleGoogleLogin;
 
 // Attach Google Sign-In button listeners (for when buttons are present)
-document.addEventListener('DOMContentLoaded', () => {
+function attachGoogleButtons() {
     const googleLoginBtn = document.getElementById('googleLoginBtn');
-    if (googleLoginBtn) googleLoginBtn.addEventListener('click', handleGoogleLogin);
-
+    if (googleLoginBtn && !googleLoginBtn.dataset.bound) {
+        googleLoginBtn.addEventListener('click', handleGoogleLogin);
+        googleLoginBtn.dataset.bound = '1';
+    }
     const googleRegisterBtn = document.getElementById('googleRegisterBtn');
-    if (googleRegisterBtn) googleRegisterBtn.addEventListener('click', handleGoogleLogin);
-});
+    if (googleRegisterBtn && !googleRegisterBtn.dataset.bound) {
+        googleRegisterBtn.addEventListener('click', handleGoogleLogin);
+        googleRegisterBtn.dataset.bound = '1';
+    }
+}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attachGoogleButtons);
+} else {
+    attachGoogleButtons();
+}
