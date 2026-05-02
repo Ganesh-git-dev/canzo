@@ -1714,6 +1714,15 @@ a {
     border-color: var(--color-gray-200);
 }
 
+[data-theme="dark"] .food-court-card {
+    background: var(--color-gray-100);
+    border-color: var(--color-gray-200);
+}
+
+[data-theme="dark"] .food-court-card-footer {
+    border-color: var(--color-gray-200);
+}
+
 [data-theme="dark"] .cart-summary {
     background: var(--color-gray-100);
     border-color: var(--color-gray-200);
