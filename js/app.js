@@ -650,22 +650,15 @@ function initCanteenBills() { const l = document.querySelector('.canteen-bills-l
 window.handleLogin = handleLogin;
 window.handleRegister = handleRegister;
 window.handleGoogleLogin = handleGoogleLogin;
+console.log('Canzo app.js loaded - handleGoogleLogin available:', typeof window.handleGoogleLogin);
 
 // Attach Google Sign-In button listeners (for when buttons are present)
-function attachGoogleButtons() {
-    const googleLoginBtn = document.getElementById('googleLoginBtn');
-    if (googleLoginBtn && !googleLoginBtn.dataset.bound) {
-        googleLoginBtn.addEventListener('click', handleGoogleLogin);
-        googleLoginBtn.dataset.bound = '1';
+(function attachGoogleButtons() {
+    const loginBtn = document.getElementById('googleLoginBtn');
+    const registerBtn = document.getElementById('googleRegisterBtn');
+    if (loginBtn) { loginBtn.addEventListener('click', () => { console.log('Google login btn clicked'); handleGoogleLogin(); }); }
+    if (registerBtn) { registerBtn.addEventListener('click', () => { console.log('Google register btn clicked'); handleGoogleLogin(); }); }
+    if (!loginBtn && !registerBtn) {
+        setTimeout(attachGoogleButtons, 100);
     }
-    const googleRegisterBtn = document.getElementById('googleRegisterBtn');
-    if (googleRegisterBtn && !googleRegisterBtn.dataset.bound) {
-        googleRegisterBtn.addEventListener('click', handleGoogleLogin);
-        googleRegisterBtn.dataset.bound = '1';
-    }
-}
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', attachGoogleButtons);
-} else {
-    attachGoogleButtons();
-}
+})();
