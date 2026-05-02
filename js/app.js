@@ -224,11 +224,11 @@ export async function handleGoogleLogin() {
     } catch (error) {
         if (error.code === 'auth/popup-closed-by-user') return;
         if (error.code === 'auth/unauthorized-domain') {
-            alert('This domain is not authorized for Google Sign-In. Please add it in Firebase Console → Authentication → Settings → Authorized domains.');
+            alert('This domain is not authorized for Google Sign-In. Current domain: ' + window.location.hostname + '\n\nPlease add it in Firebase Console → Authentication → Settings → Authorized domains.\n\nFor local testing, also add: localhost');
         } else if (error.code === 'auth/operation-not-allowed') {
             alert('Google Sign-In is not enabled. Please enable it in Firebase Console → Authentication → Sign-in method.');
         } else {
-            alert('Google login failed: ' + error.message);
+            alert('Google login failed (' + error.code + '): ' + error.message);
         }
     }
 }
@@ -650,3 +650,12 @@ function initCanteenBills() { const l = document.querySelector('.canteen-bills-l
 window.handleLogin = handleLogin;
 window.handleRegister = handleRegister;
 window.handleGoogleLogin = handleGoogleLogin;
+
+// Attach Google Sign-In button listeners (for when buttons are present)
+document.addEventListener('DOMContentLoaded', () => {
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    if (googleLoginBtn) googleLoginBtn.addEventListener('click', handleGoogleLogin);
+
+    const googleRegisterBtn = document.getElementById('googleRegisterBtn');
+    if (googleRegisterBtn) googleRegisterBtn.addEventListener('click', handleGoogleLogin);
+});
