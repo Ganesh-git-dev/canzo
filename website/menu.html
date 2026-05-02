@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - Canzo</title>
+    <meta name="description" content="Browse the full canteen menu on Canzo. Biryani, pizza, burgers, smoothies and more. Pre-order and skip the queue.">
+    <meta property="og:title" content="Menu - Canzo">
+    <meta property="og:description" content="Browse the full canteen menu on Canzo. Pre-order and skip the queue.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" href="https://canzo.in/assets/image/canzo official logo.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/cursor.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="heavenly-orb heavenly-orb--1"></div>
+    <div class="heavenly-orb heavenly-orb--2"></div>
+    <div class="heavenly-orb heavenly-orb--3"></div>
+
+    <div class="app-layout">
+        <aside class="app-sidebar" id="sidebar">
+            <div class="app-sidebar-logo">
+                <img src="https://canzo.in/assets/image/canzo official logo.png" alt="Canzo">
+            </div>
+            <nav class="app-nav">
+                <a href="dashboard.html" class="app-nav-link">
+                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    Dashboard
+                </a>
+                <a href="canteens.html" class="app-nav-link">
+                    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Canteens
+                </a>
+                <a href="menu.html" class="app-nav-link active">
+                    <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                    Menu
+                </a>
+                <a href="cart.html" class="app-nav-link">
+                    <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+                    Cart
+                    <span class="app-badge">3</span>
+                </a>
+                <div class="app-nav-divider"></div>
+                <a href="orders.html" class="app-nav-link">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    My Orders
+                </a>
+                <a href="#" class="app-nav-link">
+                    <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                    Favorites
+                </a>
+                <a href="#" class="app-nav-link">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                    Settings
+                </a>
+            </nav>
+            <div class="app-sidebar-footer">
+                <div class="app-user-info">
+                    <div class="app-user-avatar">A</div>
+                    <div class="app-user-details">
+                        <div class="app-user-name">Ganesh</div>
+                        <div class="app-user-role">EASA College of Engineering and Technology</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="app-main">
+            <header class="app-header">
+                <div class="app-header-left">
+                    <div>
+                        <h1 class="app-header-title">Menu</h1>
+                        <p class="app-header-subtitle">Main Canteen • Morning Break</p>
+                    </div>
+                </div>
+                <div class="app-header-right">
+                    <a href="cart.html" class="app-header-btn" aria-label="Cart">
+                        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+                        <span class="app-badge">3</span>
+                    </a>
+                    <button class="app-header-btn" aria-label="Notifications">
+                        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="app-content">
+                <!-- Category Tabs -->
+                <div class="menu-categories">
+                    <button class="menu-category-btn active">All Items</button>
+                    <button class="menu-category-btn">🥤 Juices</button>
+                    <button class="menu-category-btn">🍕 Pizza</button>
+                    <button class="menu-category-btn">🥤 Milkshakes</button>
+                    <button class="menu-category-btn">🍜 Maggie</button>
+                    <button class="menu-category-btn">🍰 Pastry</button>
+                    <button class="menu-category-btn">🍚 Fried Rice</button>
+                    <button class="menu-category-btn">🍗 Biryani</button>
+                    <button class="menu-category-btn">🥪 Short Bites</button>
+                </div>
+
+                <!-- Menu Items -->
+                <div class="menu-items">
+                    <div class="menu-item">
+                        <div class="menu-item-image">
+                            <img src="assets/images/biryani.jpg" alt="Chicken Biryani" loading="lazy">
+                        </div>
+                        <div class="menu-item-details">
+                            <h4 class="menu-item-name">Chicken Biryani</h4>
+                            <p class="menu-item-desc">Aromatic basmati rice with tender chicken, served with raita</p>
+                            <div class="menu-item-footer">
+                                <span class="menu-item-price">₹145</span>
+                                <button class="menu-item-add">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="menu-item-image">
+                            <img src="assets/images/burger.jpg" alt="Veg Burger" loading="lazy">
+                        </div>
+                        <div class="menu-item-details">
+                            <h4 class="menu-item-name">Veg Burger</h4>
+                            <p class="menu-item-desc">Crispy veg patty with fresh lettuce and special sauce</p>
+                            <div class="menu-item-footer">
+                                <span class="menu-item-price">₹85</span>
+                                <button class="menu-item-add">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="menu-item-image">
+                            <img src="assets/images/paneer-tikka.jpg" alt="Paneer Tikka" loading="lazy">
+                        </div>
+                        <div class="menu-item-details">
+                            <h4 class="menu-item-name">Paneer Tikka</h4>
+                            <p class="menu-item-desc">Grilled cottage cheese with spices and mint chutney</p>
+                            <div class="menu-item-footer">
+                                <span class="menu-item-price">₹120</span>
+                                <button class="menu-item-add">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="menu-item-image">
+                            <img src="assets/images/salad.jpg" alt="Fresh Salad" loading="lazy">
+                        </div>
+                        <div class="menu-item-details">
+                            <h4 class="menu-item-name">Fresh Garden Salad</h4>
+                            <p class="menu-item-desc">Mixed greens with cherry tomatoes, cucumber, and vinaigrette</p>
+                            <div class="menu-item-footer">
+                                <span class="menu-item-price">₹65</span>
+                                <button class="menu-item-add">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="menu-item-image">
+                            <img src="assets/images/pastry.jpg" alt="Chocolate Pastry" loading="lazy">
+                        </div>
+                        <div class="menu-item-details">
+                            <h4 class="menu-item-name">Chocolate Pastry</h4>
+                            <p class="menu-item-desc">Rich chocolate cream layered pastry with cocoa dust</p>
+                            <div class="menu-item-footer">
+                                <span class="menu-item-price">₹55</span>
+                                <button class="menu-item-add">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="menu-item-image">
+                            <img src="assets/images/smoothie.jpg" alt="Mango Smoothie" loading="lazy">
+                        </div>
+                        <div class="menu-item-details">
+                            <h4 class="menu-item-name">Mango Smoothie</h4>
+                            <p class="menu-item-desc">Fresh mango blended with yogurt and honey</p>
+                            <div class="menu-item-footer">
+                                <span class="menu-item-price">₹75</span>
+                                <button class="menu-item-add">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="menu-item-image">
+                            <img src="assets/images/dosa.jpg" alt="Masala Dosa" loading="lazy">
+                        </div>
+                        <div class="menu-item-details">
+                            <h4 class="menu-item-name">Masala Dosa</h4>
+                            <p class="menu-item-desc">Crispy dosa with potato masala, sambar and chutneys</p>
+                            <div class="menu-item-footer">
+                                <span class="menu-item-price">₹60</span>
+                                <button class="menu-item-add">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="menu-item-image">
+                            <img src="assets/images/fried-rice.jpg" alt="Fried Rice" loading="lazy">
+                        </div>
+                        <div class="menu-item-details">
+                            <h4 class="menu-item-name">Veg Fried Rice</h4>
+                            <p class="menu-item-desc">Wok-tossed rice with mixed vegetables and soy sauce</p>
+                            <div class="menu-item-footer">
+                                <span class="menu-item-price">₹90</span>
+                                <button class="menu-item-add">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <button class="app-sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+
+    <script src="js/cursor.js"></script>
+    <script src="js/clock.js"></script><script src="js/app.js"></script>
+</body>
+</html>

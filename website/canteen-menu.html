@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Menu - Canzo</title>
+    <meta name="description" content="Manage your canteen menu on Canzo — add, edit, and organize food items.">
+    <meta property="og:title" content="Manage Menu - Canzo">
+    <meta property="og:description" content="Manage your canteen menu on Canzo — add, edit, and organize food items.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" href="https://canzo.in/assets/image/canzo official logo.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/cursor.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="heavenly-orb heavenly-orb--1"></div>
+    <div class="heavenly-orb heavenly-orb--2"></div>
+    <div class="heavenly-orb heavenly-orb--3"></div>
+
+    <div class="app-layout">
+        <aside class="app-sidebar" id="sidebar">
+            <div class="app-sidebar-logo">
+                <img src="https://canzo.in/assets/image/canzo official logo.png" alt="Canzo">
+            </div>
+
+            <nav class="app-nav">
+                <a href="canteen-dashboard.html" class="app-nav-link">
+                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    Dashboard
+                </a>
+                <a href="canteen-menu.html" class="app-nav-link active">
+                    <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                    Manage Menu
+                </a>
+                <a href="canteen-orders.html" class="app-nav-link">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                    Orders
+                    <span class="app-badge app-badge--pulse">3</span>
+                </a>
+                <div class="app-nav-divider"></div>
+                <a href="canteen-analytics.html" class="app-nav-link">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    Analytics
+                </a>
+                <a href="canteen-settings.html" class="app-nav-link">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                    Settings
+                </a>
+                <div class="app-nav-divider"></div>
+                <a href="index.html" class="app-nav-link">
+                    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Back to Landing
+                </a>
+            </nav>
+
+            <div class="app-sidebar-footer">
+                <div class="app-user-info">
+                    <div class="app-user-avatar app-user-avatar--canteen">MC</div>
+                    <div class="app-user-details">
+                        <div class="app-user-name">Main Canteen</div>
+                        <div class="app-user-role">Block A, Ground Floor</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="app-main">
+            <header class="app-header">
+                <div class="app-header-left">
+                    <div>
+                        <h1 class="app-header-title">Manage Menu</h1>
+                        <p class="app-header-subtitle">Add, edit, and organize your food items</p>
+                    </div>
+                </div>
+                <div class="app-header-right">
+                    <button class="btn btn-primary" id="addMenuItemBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Add Item
+                    </button>
+                </div>
+            </header>
+
+            <div class="app-content">
+                <div class="menu-management-categories" id="menuCategories">
+                    <button class="menu-category-btn active" data-category="all">All Items</button>
+                    <button class="menu-category-btn" data-category="biryani">Biryani</button>
+                    <button class="menu-category-btn" data-category="pizza">Pizza</button>
+                    <button class="menu-category-btn" data-category="burgers">Burgers</button>
+                    <button class="menu-category-btn" data-category="drinks">Drinks</button>
+                    <button class="menu-category-btn" data-category="snacks">Snacks</button>
+                    <button class="menu-category-btn" data-category="desserts">Desserts</button>
+                </div>
+
+                <div class="menu-management-list" id="menuManagementList">
+                    <div class="menu-management-item" data-id="biryani-1" data-category="biryani">
+                        <div class="menu-management-item-image">
+                            <img src="assets/images/biryani.jpg" alt="Chicken Biryani">
+                        </div>
+                        <div class="menu-management-item-details">
+                            <div class="menu-management-item-header">
+                                <h4 class="menu-management-item-name">Chicken Biryani</h4>
+                                <span class="menu-management-item-category">Biryani</span>
+                            </div>
+                            <p class="menu-management-item-desc">Aromatic basmati rice with tender chicken, served with raita</p>
+                            <div class="menu-management-item-meta">
+                                <span class="menu-management-item-price">₹145</span>
+                                <label class="menu-management-item-toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="menu-management-item-toggle-slider"></span>
+                                    <span class="menu-management-item-toggle-label">In Stock</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="menu-management-item-actions">
+                            <button class="menu-management-item-edit" data-id="biryani-1">
+                                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            </button>
+                            <button class="menu-management-item-delete" data-id="biryani-1">
+                                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="menu-management-item" data-id="burger-1" data-category="burgers">
+                        <div class="menu-management-item-image">
+                            <img src="assets/images/burger.jpg" alt="Veg Burger">
+                        </div>
+                        <div class="menu-management-item-details">
+                            <div class="menu-management-item-header">
+                                <h4 class="menu-management-item-name">Veg Burger</h4>
+                                <span class="menu-management-item-category">Burgers</span>
+                            </div>
+                            <p class="menu-management-item-desc">Crispy veg patty with fresh lettuce and special sauce</p>
+                            <div class="menu-management-item-meta">
+                                <span class="menu-management-item-price">₹85</span>
+                                <label class="menu-management-item-toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="menu-management-item-toggle-slider"></span>
+                                    <span class="menu-management-item-toggle-label">In Stock</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="menu-management-item-actions">
+                            <button class="menu-management-item-edit" data-id="burger-1">
+                                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            </button>
+                            <button class="menu-management-item-delete" data-id="burger-1">
+                                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="menu-management-item" data-id="paneer-1" data-category="snacks">
+                        <div class="menu-management-item-image">
+                            <img src="assets/images/paneer-tikka.jpg" alt="Paneer Tikka">
+                        </div>
+                        <div class="menu-management-item-details">
+                            <div class="menu-management-item-header">
+                                <h4 class="menu-management-item-name">Paneer Tikka</h4>
+                                <span class="menu-management-item-category">Snacks</span>
+                            </div>
+                            <p class="menu-management-item-desc">Grilled cottage cheese with spices and mint chutney</p>
+                            <div class="menu-management-item-meta">
+                                <span class="menu-management-item-price">₹120</span>
+                                <label class="menu-management-item-toggle">
+                                    <input type="checkbox">
+                                    <span class="menu-management-item-toggle-slider"></span>
+                                    <span class="menu-management-item-toggle-label">Out of Stock</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="menu-management-item-actions">
+                            <button class="menu-management-item-edit" data-id="paneer-1">
+                                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            </button>
+                            <button class="menu-management-item-delete" data-id="paneer-1">
+                                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="menu-management-item" data-id="smoothie-1" data-category="drinks">
+                        <div class="menu-management-item-image">
+                            <img src="assets/images/smoothie.jpg" alt="Mango Smoothie">
+                        </div>
+                        <div class="menu-management-item-details">
+                            <div class="menu-management-item-header">
+                                <h4 class="menu-management-item-name">Mango Smoothie</h4>
+                                <span class="menu-management-item-category">Drinks</span>
+                            </div>
+                            <p class="menu-management-item-desc">Fresh mango blended with yogurt and honey</p>
+                            <div class="menu-management-item-meta">
+                                <span class="menu-management-item-price">₹75</span>
+                                <label class="menu-management-item-toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="menu-management-item-toggle-slider"></span>
+                                    <span class="menu-management-item-toggle-label">In Stock</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="menu-management-item-actions">
+                            <button class="menu-management-item-edit" data-id="smoothie-1">
+                                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            </button>
+                            <button class="menu-management-item-delete" data-id="smoothie-1">
+                                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="menu-management-item" data-id="pastry-1" data-category="desserts">
+                        <div class="menu-management-item-image">
+                            <img src="assets/images/pastry.jpg" alt="Chocolate Pastry">
+                        </div>
+                        <div class="menu-management-item-details">
+                            <div class="menu-management-item-header">
+                                <h4 class="menu-management-item-name">Chocolate Pastry</h4>
+                                <span class="menu-management-item-category">Desserts</span>
+                            </div>
+                            <p class="menu-management-item-desc">Rich chocolate cream layered pastry with cocoa dust</p>
+                            <div class="menu-management-item-meta">
+                                <span class="menu-management-item-price">₹55</span>
+                                <label class="menu-management-item-toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="menu-management-item-toggle-slider"></span>
+                                    <span class="menu-management-item-toggle-label">In Stock</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="menu-management-item-actions">
+                            <button class="menu-management-item-edit" data-id="pastry-1">
+                                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            </button>
+                            <button class="menu-management-item-delete" data-id="pastry-1">
+                                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="menu-management-item" data-id="friedrice-1" data-category="biryani">
+                        <div class="menu-management-item-image">
+                            <img src="assets/images/fried-rice.jpg" alt="Veg Fried Rice">
+                        </div>
+                        <div class="menu-management-item-details">
+                            <div class="menu-management-item-header">
+                                <h4 class="menu-management-item-name">Veg Fried Rice</h4>
+                                <span class="menu-management-item-category">Biryani</span>
+                            </div>
+                            <p class="menu-management-item-desc">Wok-tossed rice with mixed vegetables and soy sauce</p>
+                            <div class="menu-management-item-meta">
+                                <span class="menu-management-item-price">₹90</span>
+                                <label class="menu-management-item-toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="menu-management-item-toggle-slider"></span>
+                                    <span class="menu-management-item-toggle-label">In Stock</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="menu-management-item-actions">
+                            <button class="menu-management-item-edit" data-id="friedrice-1">
+                                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            </button>
+                            <button class="menu-management-item-delete" data-id="friedrice-1">
+                                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <button class="app-sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+
+    <div class="modal-overlay" id="menuModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="menuModalTitle">Add New Item</h3>
+                <button class="modal-close" id="menuModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="menuForm">
+                    <div class="form-group">
+                        <label class="form-label">Item Name</label>
+                        <input type="text" class="form-input" id="menuItemName" placeholder="e.g. Chicken Biryani" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <input type="text" class="form-input" id="menuItemDesc" placeholder="Short description">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Price (₹)</label>
+                            <input type="number" class="form-input" id="menuItemPrice" placeholder="145" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" id="menuItemCategory">
+                                <option value="biryani">Biryani</option>
+                                <option value="pizza">Pizza</option>
+                                <option value="burgers">Burgers</option>
+                                <option value="drinks">Drinks</option>
+                                <option value="snacks">Snacks</option>
+                                <option value="desserts">Desserts</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Image (local path)</label>
+                        <input type="text" class="form-input" id="menuItemImage" placeholder="assets/images/biryani.jpg">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="menuModalCancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="menuModalSave">Add Item</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/cursor.js"></script>
+    <script src="js/clock.js"></script><script src="js/app.js"></script>
+</body>
+</html>

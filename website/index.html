@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canzo - Skip The Queue. Order Smarter.</title>
+    <meta name="description" content="Canzo transforms your college canteen experience at EASA College. Pre-order meals, skip long lines, and pick up your food when it's ready.">
+    <meta name="keywords" content="canteen, pre-order, college food, EASA, campus dining, skip queue, food ordering">
+    <meta name="author" content="Canzo">
+    <meta property="og:title" content="Canzo - Skip The Queue. Order Smarter.">
+    <meta property="og:description" content="Pre-order meals from your college canteen. Skip lines, pick up when ready.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://canzo.in">
+    <meta property="og:image" content="https://canzo.in/assets/image/canzo official logo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Canzo - Skip The Queue. Order Smarter.">
+    <meta name="twitter:description" content="Pre-order meals from your college canteen. Skip lines, pick up when ready.">
+    <link rel="icon" href="https://canzo.in/assets/image/canzo official logo.png" type="image/png">
+    <link rel="canonical" href="https://canzo.in">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/loading.css">
+    <link rel="stylesheet" href="css/cursor.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Heavenly background orbs -->
+    <div class="heavenly-orb heavenly-orb--1"></div>
+    <div class="heavenly-orb heavenly-orb--2"></div>
+    <div class="heavenly-orb heavenly-orb--3"></div>
+
+    <!-- Smooth scroll wrapper -->
+    <div class="smooth-wrapper">
+        <!-- Navigation -->
+        <nav class="navbar" id="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="nav-logo nav-logo-clock">
+                    <img src="https://canzo.in/assets/image/canzo official logo.png" alt="Canzo Logo">
+                    <div class="canzo-clock nav-clock" data-size="small"></div>
+                </a>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#why-canzo">Why Canzo</a>
+                </div>
+                <div class="nav-cta">
+                    <button class="nav-theme-toggle" id="navThemeToggle" aria-label="Toggle dark mode">
+                        <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                        <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    </button>
+                    <a href="#" class="btn btn-primary" id="getStartedBtn">Get Started</a>
+                </div>
+                <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#why-canzo">Why Canzo</a>
+            <a href="#" class="btn btn-primary role-select-trigger">Get Started</a>
+        </div>
+
+        <!-- Hero Section -->
+        <section class="hero" id="hero">
+            <div class="hero-bg"></div>
+            <div class="hero-content">
+                <!-- Canzo Logo with Real-Time Clock in the "O" -->
+                <div class="hero-logo-wrapper">
+                    <div class="hero-logo-container">
+                        <img src="https://canzo.in/assets/image/canzo official logo.png" alt="Canzo" class="hero-logo">
+                        <div class="canzo-clock" data-size="large"></div>
+                    </div>
+                </div>
+                <p class="hero-tagline">Because time matters</p>
+                <p class="hero-subtitle">Canzo transforms your college canteen experience at EASA College of Engineering and Technology. Pre-order meals, skip long lines, and pick up your food when it's ready.</p>
+                <div class="hero-actions">
+                    <a href="#" class="btn btn-primary btn-large role-select-trigger">Start Ordering Now</a>
+                    <a href="#how-it-works" class="btn btn-secondary btn-large">See How It Works</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">10K+</span>
+                        <span class="stat-label">Orders Delivered</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">50+</span>
+                        <span class="stat-label">College Canteens</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">4.9</span>
+                        <span class="stat-label">User Rating</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-scroll-indicator">
+                <div class="scroll-line"></div>
+                <span>Scroll to explore</span>
+            </div>
+        </section>
+
+        <!-- Expanding Image Section 1: The Problem -->
+        <section class="expand-section" id="expand-1">
+            <div class="expand-container">
+                <div class="expand-image-wrapper">
+                    <div class="expand-image" style="background-image: url('assets/images/canteen-crowd.jpg')"></div>
+                    <div class="expand-overlay"></div>
+                </div>
+                <div class="expand-content">
+                    <span class="section-tag">The Problem</span>
+                    <h2 class="section-title">Long queues waste<br><span style="color: var(--color-accent)">precious time.</span></h2>
+                    <p class="section-text">Students spend 15-30 minutes waiting in canteen queues every day. That's hours lost every week — time that could be spent studying, socializing, or just relaxing.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- What is Canzo? Section -->
+        <section class="what-is-canzo" id="what-is-canzo">
+            <div class="container">
+                <div class="what-is-canzo-grid">
+                    <div class="what-is-canzo-text">
+                        <span class="section-tag">About Canzo</span>
+                        <h2 class="section-title">What is Canzo?</h2>
+                        <p class="what-is-canzo-desc">Canzo is a smart canteen ordering platform built specifically for EASA College of Engineering and Technology. Order food from your campus canteen instantly, browse menus, and pick up when ready — all without waiting in line.</p>
+                        <div class="what-is-canzo-features">
+                            <div class="what-feature">
+                                <div class="what-feature-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                                </div>
+                                <div>
+                                    <h4>Real-Time Tracking</h4>
+                                    <p>Know exactly when your food is being prepared and when it's ready for pickup.</p>
+                                </div>
+                            </div>
+                            <div class="what-feature">
+                                <div class="what-feature-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                </div>
+                                <div>
+                                    <h4>Real-Time Search</h4>
+                                    <p>Search for your favourite dishes instantly across all canteens.</p>
+                                </div>
+                            </div>
+                            <div class="what-feature">
+                                <div class="what-feature-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                </div>
+                                <div>
+                                    <h4>Meal-Time Menus</h4>
+                                    <p>Morning, lunch, or evening — menus update by time so you always see what's available.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="what-is-canzo-image">
+                        <img src="assets/images/payment-checkout.jpg" alt="Canzo App" loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Expanding Image Section 2: The Solution -->
+        <section class="expand-section" id="expand-2">
+            <div class="expand-container">
+                <div class="expand-image-wrapper">
+                    <div class="expand-image" style="background-image: url('assets/images/pizza-closeup.jpg')"></div>
+                    <div class="expand-overlay"></div>
+                </div>
+                <div class="expand-content">
+                    <span class="section-tag">The Solution</span>
+                    <h2 class="section-title">Order From<br>Your Phone.</h2>
+                    <p class="section-text">Browse menus, customize your meal, and place your order in seconds. Canzo brings the entire canteen to your fingertips. No more rushing, no more waiting.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Expanding Image Section 3: The Experience -->
+        <section class="expand-section" id="expand-3">
+            <div class="expand-container">
+                <div class="expand-image-wrapper">
+                    <div class="expand-image" style="background-image: url('assets/images/plated-meal.jpg')"></div>
+                    <div class="expand-overlay"></div>
+                </div>
+                <div class="expand-content">
+                    <span class="section-tag">The Experience</span>
+                    <h2 class="section-title">Pick Up &<br>Enjoy.</h2>
+                    <p class="section-text">Walk in when your food is ready. Skip the line entirely. Your meal is waiting for you, fresh and hot. This is how campus dining should work.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Grid Section -->
+        <section class="features" id="features">
+            <div class="container">
+                <span class="section-tag center">Features</span>
+                <h2 class="section-title center">Everything You Need,<br>Nothing You Don't</h2>
+                <p class="section-subtitle center">Built for speed, designed for students, optimized for canteens.</p>
+
+                <div class="features-grid">
+                    <div class="feature-card" data-animate>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2v20M2 12h20"/>
+                                <circle cx="12" cy="12" r="10"/>
+                            </svg>
+                        </div>
+                        <h3>Real-Time Menus</h3>
+                        <p>Live updates on availability, prices, and daily specials. Know what's cooking before you get there.</p>
+                    </div>
+
+                    <div class="feature-card" data-animate>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                            </svg>
+                        </div>
+                        <h3>Instant Ordering</h3>
+                        <p>Three taps and you're done. Our streamlined interface gets you from hungry to ordered in seconds.</p>
+                    </div>
+
+                    <div class="feature-card" data-animate>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <h3>Smart Pickup</h3>
+                        <p>Get notified when your order is ready. Walk straight to the pickup counter — zero waiting.</p>
+                    </div>
+
+                    <div class="feature-card" data-animate>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                <line x1="1" y1="10" x2="23" y2="10"/>
+                            </svg>
+                        </div>
+                        <h3>Easy Payments</h3>
+                        <p>UPI, cards, wallets — pay your way. Secure, fast, and integrated with your campus system.</p>
+                    </div>
+
+                    <div class="feature-card" data-animate>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 010 7.75"/>
+                            </svg>
+                        </div>
+                        <h3>Group Orders</h3>
+                        <p>Order for your whole squad in one go. Split bills, share carts, and eat together.</p>
+                    </div>
+
+                    <div class="feature-card" data-animate>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                            </svg>
+                        </div>
+                        <h3>Order History</h3>
+                        <p>Reorder your favorites with one tap. Track spending, revisit meals, never forget what you loved.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="how-it-works" id="how-it-works">
+            <div class="container">
+                <span class="section-tag center">How It Works</span>
+                <h2 class="section-title center">Three Steps to<br>Better Lunches</h2>
+
+                <div class="steps-container">
+                    <div class="step" data-step="1">
+                        <div class="step-image">
+                            <img src="assets/images/phone-ordering.jpg" alt="Browse Menu" loading="lazy">
+                        </div>
+                        <div class="step-content">
+                            <span class="step-number">01</span>
+                            <h3>Browse the Menu</h3>
+                            <p>Open Canzo and explore what's available at your canteen today. Filter by category, price, or dietary preferences. See real-time availability.</p>
+                        </div>
+                    </div>
+
+                    <div class="step" data-step="2">
+                        <div class="step-image">
+                            <img src="assets/images/payment-checkout.jpg" alt="Place Order" loading="lazy">
+                        </div>
+                        <div class="step-content">
+                            <span class="step-number">02</span>
+                            <h3>Place Your Order</h3>
+                            <p>Customize your meal, add extras, and checkout securely. Choose your pickup time slot. Pay with UPI, card, or wallet.</p>
+                        </div>
+                    </div>
+
+                    <div class="step" data-step="3">
+                        <div class="step-image">
+                            <img src="assets/images/food-service.jpg" alt="Pickup Food" loading="lazy">
+                        </div>
+                        <div class="step-content">
+                            <span class="step-number">03</span>
+                            <h3>Pick Up & Enjoy</h3>
+                            <p>Get a notification when your order is ready. Walk to the canteen, skip the line, and grab your food. That's it.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Canzo Section -->
+        <section class="why-canzo" id="why-canzo">
+            <div class="container">
+                <span class="section-tag center">Why Canzo</span>
+                <h2 class="section-title center">Built Different.<br>Works Better.</h2>
+
+                <div class="benefits-grid">
+                    <div class="benefit-card" data-animate>
+                        <div class="benefit-image">
+                            <img src="assets/images/fresh-food.jpg" alt="Fresh Food" loading="lazy">
+                        </div>
+                        <div class="benefit-content">
+                            <h3>Always Fresh</h3>
+                            <p>Your food is prepared fresh when you order. No sitting under heat lamps. No stale leftovers. Just hot, delicious meals made to order.</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-card" data-animate>
+                        <div class="benefit-image">
+                            <img src="assets/images/students-group.jpg" alt="Student Focused" loading="lazy">
+                        </div>
+                        <div class="benefit-content">
+                            <h3>Student-First Design</h3>
+                            <p>Built by people who understand campus life. Budget-friendly options, quick reorders, and features that actually matter to students.</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-card" data-animate>
+                        <div class="benefit-image">
+                            <img src="assets/images/analytics.jpg" alt="Smart Analytics" loading="lazy">
+                        </div>
+                        <div class="benefit-content">
+                            <h3>Smart for Canteens</h3>
+                            <p>Our dashboard helps canteens reduce waste, predict demand, and serve more students efficiently. Everyone wins.</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-card" data-animate>
+                        <div class="benefit-image">
+                            <img src="assets/images/professional.jpg" alt="Reliable" loading="lazy">
+                        </div>
+                        <div class="benefit-content">
+                            <h3>Reliable & Fast</h3>
+                            <p>99.9% uptime during college hours. Lightning-fast ordering even on campus Wi-Fi. Built to handle rush hour without breaking a sweat.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials">
+            <div class="container">
+                <span class="section-tag center">Loved By Students</span>
+                <h2 class="section-title center">Don't Take Our<br>Word For It</h2>
+
+                <div class="testimonials-grid">
+                    <div class="testimonial-card" data-animate>
+                        <div class="testimonial-stars">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        </div>
+                        <p>"Canzo literally saved my lunch breaks. I used to spend 20 minutes in line. Now I just walk in and grab my food."</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">A</div>
+                            <div class="author-info">
+                                <span class="author-name">Arjun M.</span>
+                                <span class="author-role">Engineering Student</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card" data-animate>
+                        <div class="testimonial-stars">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        </div>
+                        <p>"The group order feature is a game changer for our study groups. One person orders, everyone pays their share. Brilliant."</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">P</div>
+                            <div class="author-info">
+                                <span class="author-name">Priya S.</span>
+                                <span class="author-role">Medical Student</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card" data-animate>
+                        <div class="testimonial-stars">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        </div>
+                        <p>"As a canteen owner, Canzo helped us reduce food waste by 40%. The analytics dashboard is incredibly useful."</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">R</div>
+                            <div class="author-info">
+                                <span class="author-name">Rajesh K.</span>
+                                <span class="author-role">Canteen Manager</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA Section -->
+        <section class="final-cta" id="cta">
+            <div class="cta-bg"></div>
+            <div class="cta-content">
+                <span class="section-tag light">Ready?</span>
+                <h2 class="cta-title">Stop Waiting.<br>Start Eating.</h2>
+                <p class="cta-subtitle">Join thousands of students who've already upgraded their canteen experience. Your next meal is one tap away.</p>
+                <div class="cta-actions">
+                    <a href="#" class="btn btn-white btn-large role-select-trigger">Create Free Account</a>
+                    <a href="#" class="btn btn-outline-white btn-large role-select-trigger">Already Have an Account?</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <img src="https://canzo.in/assets/image/canzo official logo.png" alt="Canzo Logo" class="footer-logo">
+                        <p>Canzo is a smart canteen ordering platform for colleges and educational institutions. Order food, skip queues, and enjoy campus life.</p>
+                    </div>
+                    <div class="footer-links">
+                        <h4>Product</h4>
+                        <a href="#features">Features</a>
+                        <a href="#how-it-works">How It Works</a>
+                        <a href="#why-canzo">Why Canzo</a>
+                    </div>
+                    <div class="footer-links">
+                        <h4>Company</h4>
+                        <a href="index.html">Home</a>
+                        <a href="login.html">Login</a>
+                        <a href="register.html">Sign Up</a>
+                    </div>
+                    <div class="footer-links">
+                        <h4>Support</h4>
+                        <a href="mailto:support@canzo.in">Contact Us</a>
+                        <a href="#">FAQ</a>
+                        <a href="#">Help Center</a>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2026 Canzo. All rights reserved.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Twitter">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </a>
+                        <a href="#" aria-label="Instagram">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                        </a>
+                        <a href="#" aria-label="LinkedIn">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Role Selection Modal -->
+    <div class="role-modal-overlay" id="roleModalOverlay">
+        <div class="role-modal">
+            <button class="role-modal-close" id="roleModalClose">&times;</button>
+            <div class="role-modal-header">
+                <img src="https://canzo.in/assets/image/canzo official logo.png" alt="Canzo" class="role-modal-logo">
+                <h2>Continue as</h2>
+                <p>Choose how you'll use Canzo</p>
+            </div>
+            <div class="role-modal-options">
+                <button class="role-option" data-role="student" data-action="register">
+                    <div class="role-option-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <h3>Student</h3>
+                    <p>Browse menus, order food, track orders</p>
+                </button>
+                <button class="role-option" data-role="canteen" data-action="register">
+                    <div class="role-option-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3h18v18H3zM3 9h18M9 21V9"/>
+                        </svg>
+                    </div>
+                    <h3>Canteen Admin</h3>
+                    <p>Manage menu, orders, analytics</p>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GSAP + ScrollTrigger CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+    <script src="js/loading.js"></script>
+    <script src="js/cursor.js"></script>
+    <script src="js/clock.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.querySelectorAll('.role-select-trigger, #getStartedBtn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('roleModalOverlay').classList.add('active');
+            });
+        });
+        document.getElementById('roleModalClose').addEventListener('click', () => {
+            document.getElementById('roleModalOverlay').classList.remove('active');
+        });
+        document.getElementById('roleModalOverlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                e.currentTarget.classList.remove('active');
+            }
+        });
+        document.querySelectorAll('.role-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const role = option.dataset.role;
+                localStorage.setItem('canzo_role', role);
+                if (role === 'canteen') {
+                    window.location.href = 'register.html';
+                } else {
+                    window.location.href = 'register.html';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

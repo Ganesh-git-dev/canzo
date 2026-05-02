@@ -1,0 +1,215 @@
+/* ============================================
+   CANZO - Loading Screen
+   Logo zooms out from center to reveal full logo
+   ============================================ */
+
+.loading-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--heavenly-bg-1);
+    overflow: hidden;
+}
+
+.loading-screen ~ .heavenly-orb,
+.loading-screen ~ .cursor-fluid,
+.loading-screen ~ .cursor-glow,
+.loading-screen ~ .cursor-ring {
+    display: none !important;
+}
+
+.loading-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 500px 400px at 50% 50%, rgba(167, 139, 250, 0.2) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.loading-bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.loading-bg-orb--1 {
+    width: 500px;
+    height: 500px;
+    background: rgba(167, 139, 250, 0.35);
+    top: -150px;
+    right: -150px;
+    animation: loadingOrbFloat 12s ease-in-out infinite alternate;
+}
+
+.loading-bg-orb--2 {
+    width: 450px;
+    height: 450px;
+    background: rgba(192, 132, 252, 0.3);
+    bottom: -10%;
+    left: -100px;
+    animation: loadingOrbFloat 12s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes loadingOrbFloat {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(30px, -20px) scale(1.1); }
+    100% { transform: translate(-20px, 15px) scale(0.95); }
+}
+
+.loading-bg-orb {
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.loading-bg-orb--3 {
+    width: 400px;
+    height: 400px;
+    background: rgba(216, 180, 254, 0.25);
+    top: 40%;
+    right: 10%;
+    animation: loadingOrbFloat 14s ease-in-out infinite alternate-reverse;
+}
+
+.loading-bg-orb--4 {
+    width: 350px;
+    height: 350px;
+    background: rgba(139, 92, 246, 0.22);
+    bottom: 20%;
+    left: 30%;
+    animation: loadingOrbFloat 16s ease-in-out infinite alternate;
+}
+
+/* Loading content wrapper - centered by flex parent */
+.loading-logo-wrapper {
+    position: relative;
+    width: clamp(350px, 70vw, 650px);
+    height: clamp(100px, 18vw, 190px);
+    z-index: 1;
+    transform-origin: center center;
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Logo container - reveals from clock position */
+.loading-logo-container {
+    position: absolute;
+    top: -50px;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    will-change: opacity;
+}
+
+.loading-logo {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 4px 20px rgba(124, 58, 237, 0.2));
+}
+
+.loading-clock {
+    position: absolute;
+    right: 0.5%;
+    top: 18%;
+    width: 21%;
+    height: 72%;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0;
+}
+
+.loading-clock svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
+}
+
+/* Standalone clock - centered via parent, animated via scale only */
+.loading-clock-standalone {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
+    margin-left: -100px;
+    margin-top: -100px;
+    transform: scale(10);
+    z-index: 10;
+    opacity: 1;
+    will-change: transform, opacity;
+}
+
+.loading-clock-standalone svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.2));
+}
+
+/* Loading Percentage */
+.loading-percentage {
+    position: absolute;
+    bottom: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-primary);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-light);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.loading-percentage span {
+    font-size: 28px;
+    color: var(--color-accent);
+    font-weight: 700;
+}
+
+/* Loading Progress Bar */
+.loading-bar-container {
+    position: absolute;
+    bottom: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 3px;
+    background: var(--color-gray-200);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.loading-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-light));
+    border-radius: 2px;
+    transition: width 0.1s ease;
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
+}
+
+/* Loading Exit Animation */
+.loading-screen.exiting {
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.loading-screen.exiting .loading-clock-standalone,
+.loading-screen.exiting .loading-logo-container,
+.loading-screen.exiting .loading-percentage,
+.loading-screen.exiting .loading-bar-container {
+    transition: none;
+}
+
+[data-theme="dark"] .loading-logo {
+    filter: brightness(0) invert(1);
+}

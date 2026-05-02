@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Canzo</title>
+    <meta name="description" content="Login to your Canzo account to pre-order meals from your college canteen.">
+    <meta property="og:title" content="Login - Canzo">
+    <meta property="og:description" content="Login to your Canzo account to pre-order meals from your college canteen.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" href="https://canzo.in/assets/image/canzo official logo.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/cursor.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Heavenly background orbs -->
+    <div class="heavenly-orb heavenly-orb--1"></div>
+    <div class="heavenly-orb heavenly-orb--2"></div>
+    <div class="heavenly-orb heavenly-orb--3"></div>
+
+    <!-- Login Page -->
+    <div class="auth-page">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <img src="https://canzo.in/assets/image/canzo official logo.png" alt="Canzo Logo" class="auth-logo">
+                    <h1 class="auth-title">Welcome Back</h1>
+                    <p class="auth-subtitle">Sign in to your Canzo account</p>
+                </div>
+
+                <div class="role-selector" id="loginRoleSelector">
+                    <button class="role-btn active" data-role="student" type="button" onclick="selectRole('login', 'student')">Student</button>
+                    <button class="role-btn" data-role="canteen" type="button" onclick="selectRole('login', 'canteen')">Canteen Admin</button>
+                </div>
+
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address</label>
+                        <input type="email" id="email" class="form-input" placeholder="e720524am006@ecetonline.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+                    </div>
+
+                    <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="remember">
+                            <label for="remember">Remember me</label>
+                        </div>
+                        <a href="#" style="font-size: 14px; color: var(--color-accent); font-weight: 500;">Forgot password?</a>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-large btn-full">Sign In</button>
+                    </div>
+                </form>
+
+                <div class="form-footer">
+                    Don't have an account? <a href="register.html">Create one</a>
+                </div>
+            </div>
+
+            <p style="text-align: center; margin-top: 24px; font-size: 14px; color: var(--color-text-light);">
+                <a href="index.html" style="color: var(--color-accent); font-weight: 500;">← Back to home</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="js/cursor.js"></script>
+    <script src="js/clock.js"></script><script src="js/app.js"></script>
+</body>
+</html>
