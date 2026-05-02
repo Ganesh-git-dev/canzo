@@ -205,6 +205,7 @@ export async function handleLogin(e) {
 
 export async function handleGoogleLogin() {
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
     try {
         const result = await signInWithPopup(auth, provider);
         const userDoc = await getDoc(doc(db, 'users', result.user.uid));
@@ -220,10 +221,22 @@ export async function handleGoogleLogin() {
             await setDoc(doc(db, 'users', result.user.uid), userData);
             showProfileCompleteModal(result.user);
         }
-    } catch (error) { if (error.code !== 'auth/popup-closed-by-user') alert('Google login failed: ' + error.message); }
+    } catch (error) {
+        if (error.code === 'auth/popup-closed-by-user') return;
+        if (error.code === 'auth/unauthorized-domain') {
+            alert('This domain is not authorized for Google Sign-In. Please add it in Firebase Console → Authentication → Settings → Authorized domains.');
+        } else if (error.code === 'auth/operation-not-allowed') {
+            alert('Google Sign-In is not enabled. Please enable it in Firebase Console → Authentication → Sign-in method.');
+        } else {
+            alert('Google login failed: ' + error.message);
+        }
+    }
 }
 
+let profileModalUserData = null;
+
 function showProfileCompleteModal(user) {
+    profileModalUserData = user;
     let modal = document.getElementById('profileCompleteModal');
     if (!modal) {
         modal = document.createElement('div');
@@ -273,21 +286,21 @@ function showProfileCompleteModal(user) {
             </div>
         `;
         document.body.appendChild(modal);
+        document.getElementById('profileCompleteForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const regNumber = document.getElementById('profileRegNumber').value;
+            const dept = document.getElementById('profileDept').value;
+            const year = document.getElementById('profileYear').value;
+            const phone = document.getElementById('profilePhone').value;
+            try {
+                await updateDoc(doc(db, 'users', profileModalUserData.uid), { registerNumber: regNumber, department: dept, year, phone, updatedAt: serverTimestamp() });
+                modal.classList.remove('active');
+                window.location.href = 'dashboard.html';
+            } catch (error) { alert('Failed to update profile: ' + error.message); }
+        });
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
     }
     modal.classList.add('active');
-    document.getElementById('profileCompleteForm')?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const regNumber = document.getElementById('profileRegNumber').value;
-        const dept = document.getElementById('profileDept').value;
-        const year = document.getElementById('profileYear').value;
-        const phone = document.getElementById('profilePhone').value;
-        try {
-            await updateDoc(doc(db, 'users', user.uid), { registerNumber: regNumber, department: dept, year, phone, updatedAt: serverTimestamp() });
-            modal.classList.remove('active');
-            window.location.href = 'dashboard.html';
-        } catch (error) { alert('Failed to update profile: ' + error.message); }
-    });
-    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
 }
 
 export async function handleRegister(e) {

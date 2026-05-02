@@ -14,7 +14,9 @@
 
 - [x] Marketing landing page with GSAP scroll animations + loading screen
 - [x] "Get Started" links directly to student registration (no role modal)
-- [x] Firebase Authentication (Email/Password) for students and canteen admins
+- [x] Firebase Authentication (Email/Password + Google Sign-In) for students and canteen admins
+- [x] Google Sign-In with profile completion modal (register number, department, year)
+- [x] Bills pages for students (`bills.html`) and canteen admins (`canteen-bills.html`)
 - [x] Firestore database for users, orders, menu items, and settings
 - [x] Real-time order sync across all tabs via Firestore `onSnapshot` listeners
 - [x] Real-time menu sync — admin CRUD reflects instantly on student menu
@@ -88,7 +90,7 @@ D:\canzo\
 | HTML5 | Semantic markup |
 | CSS3 | Styling, CSS variables, dark mode, animations, responsive |
 | JavaScript ES6+ (ES Modules) | App logic, Firebase integration |
-| Firebase Auth | Email/Password authentication |
+| Firebase Auth | Email/Password + Google Sign-In (OAuth) |
 | Firestore | Real-time database (orders, menu, settings, users) |
 | GSAP 3.12.5 | Landing page scroll animations |
 | Google Fonts | Inter + Space Grotesk |
