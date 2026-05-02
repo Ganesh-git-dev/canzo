@@ -2421,3 +2421,305 @@
     box-shadow: 0 2px 12px rgba(139, 92, 246, 0.3);
 }
 
+/* Google Sign-In Button */
+.btn-google {
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--color-gray-200);
+    background: var(--color-white);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+    font-family: var(--font-secondary);
+}
+
+.btn-google:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.15);
+    background: var(--color-gray-50);
+}
+
+.btn-google svg {
+    flex-shrink: 0;
+}
+
+/* Bills Page */
+.bills-list,
+.canteen-bills-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.bill-card {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-gray-100);
+    transition: all 0.3s ease;
+}
+
+.bill-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.bill-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-gray-100);
+}
+
+.bill-number {
+    font-family: var(--font-primary);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 4px;
+}
+
+.bill-date {
+    font-size: 13px;
+    color: var(--color-text-light);
+}
+
+.bill-student {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.bill-total {
+    font-family: var(--font-primary);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.bill-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.bill-item-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--color-text);
+}
+
+.bill-item-name {
+    color: var(--color-text-light);
+}
+
+.bill-item-price {
+    font-weight: 600;
+}
+
+.bill-summary {
+    background: var(--color-gray-50);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.bill-summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--color-text-light);
+    margin-bottom: 8px;
+}
+
+.bill-summary-row:last-child {
+    margin-bottom: 0;
+}
+
+.bill-summary-row.total {
+    padding-top: 8px;
+    margin-top: 8px;
+    border-top: 1px solid var(--color-gray-200);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.bill-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-gray-100);
+}
+
+.bill-slot {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-accent);
+    background: rgba(124, 58, 237, 0.1);
+    padding: 4px 12px;
+    border-radius: 50px;
+}
+
+.bill-payment {
+    font-size: 13px;
+    color: var(--color-text-light);
+    font-weight: 500;
+}
+
+/* Status Advance Button */
+.btn-status-advance,
+.btn-order-advance {
+    padding: 6px 16px;
+    border-radius: 50px;
+    border: none;
+    background: var(--color-accent);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-status-advance:hover,
+.btn-order-advance:hover {
+    background: var(--color-accent-dark);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+/* Profile Completion Modal */
+.profile-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.profile-modal.active {
+    display: flex;
+}
+
+.profile-modal-content {
+    background: var(--color-white);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 480px;
+    box-shadow: var(--shadow-xl);
+    padding: 40px;
+    text-align: center;
+}
+
+.profile-modal-title {
+    font-family: var(--font-primary);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 8px;
+}
+
+.profile-modal-desc {
+    font-size: 15px;
+    color: var(--color-text-light);
+    margin-bottom: 28px;
+}
+
+.profile-modal-form {
+    text-align: left;
+}
+
+.profile-modal-actions {
+    margin-top: 28px;
+}
+
+/* Canteen Order Status Badges */
+.canteen-order-status--accepted {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.canteen-order-status--prepared {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.canteen-order-status--delivered {
+    background: rgba(124, 58, 237, 0.1);
+    color: var(--color-accent);
+}
+
+.order-card-status.accepted {
+    background: linear-gradient(135deg, #3b82f6, #60a5fa);
+}
+
+.order-card-status.prepared {
+    background: linear-gradient(135deg, #10b981, #34d399);
+}
+
+/* Order Card Badge */
+.order-card-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.order-card-badge.accepted {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.order-card-badge.preparing {
+    background: rgba(124, 58, 237, 0.1);
+    color: var(--color-accent);
+}
+
+.order-card-badge.prepared {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.order-card-badge.delivered {
+    background: rgba(124, 58, 237, 0.1);
+    color: var(--color-accent);
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .btn-google {
+    background: var(--color-gray-800);
+    border-color: var(--color-gray-700);
+}
+
+[data-theme="dark"] .btn-google:hover {
+    border-color: var(--color-accent);
+    background: var(--color-gray-700);
+}
+
+[data-theme="dark"] .bill-summary {
+    background: var(--color-gray-800);
+}
+
+[data-theme="dark"] .bill-slot {
+    background: rgba(139, 92, 246, 0.2);
+}
+

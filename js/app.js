@@ -209,10 +209,85 @@ export async function handleGoogleLogin() {
         const result = await signInWithPopup(auth, provider);
         const userDoc = await getDoc(doc(db, 'users', result.user.uid));
         if (userDoc.exists()) {
-            const role = userDoc.data().role;
-            window.location.href = role === 'canteen' ? 'canteen-dashboard.html' : 'dashboard.html';
+            const data = userDoc.data();
+            if (!data.registerNumber || !data.department || !data.year) {
+                showProfileCompleteModal(result.user);
+            } else {
+                window.location.href = data.role === 'canteen' ? 'canteen-dashboard.html' : 'dashboard.html';
+            }
+        } else {
+            const userData = { email: result.user.email, name: result.user.displayName || 'Student', role: 'student', phone: '', department: '', year: '', registerNumber: '', balance: 0, totalOrders: 0, totalSpent: 0, favoriteItems: [], dietaryPreferences: [], createdAt: serverTimestamp(), updatedAt: serverTimestamp() };
+            await setDoc(doc(db, 'users', result.user.uid), userData);
+            showProfileCompleteModal(result.user);
         }
     } catch (error) { if (error.code !== 'auth/popup-closed-by-user') alert('Google login failed: ' + error.message); }
+}
+
+function showProfileCompleteModal(user) {
+    let modal = document.getElementById('profileCompleteModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'profileCompleteModal';
+        modal.className = 'profile-modal';
+        modal.innerHTML = `
+            <div class="profile-modal-content">
+                <h2 class="profile-modal-title">Complete Your Profile</h2>
+                <p class="profile-modal-desc">Welcome${user.displayName ? ', ' + user.displayName : ''}! Please fill in your college details to continue.</p>
+                <form id="profileCompleteForm" class="profile-modal-form">
+                    <div class="form-group">
+                        <label class="form-label" for="profileRegNumber">Register Number</label>
+                        <input type="text" id="profileRegNumber" class="form-input" placeholder="E720524AM006" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="profileDept">Department</label>
+                            <select id="profileDept" class="form-select" required>
+                                <option value="">Choose...</option>
+                                <option value="cse">CSE</option>
+                                <option value="ece">ECE</option>
+                                <option value="eee">EEE</option>
+                                <option value="mech">MECH</option>
+                                <option value="civil">CIVIL</option>
+                                <option value="it">IT</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="profileYear">Year</label>
+                            <select id="profileYear" class="form-select" required>
+                                <option value="">Year</option>
+                                <option value="1st Year">1st Year</option>
+                                <option value="2nd Year">2nd Year</option>
+                                <option value="3rd Year">3rd Year</option>
+                                <option value="4th Year">4th Year</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="profilePhone">Phone Number</label>
+                        <input type="tel" id="profilePhone" class="form-input" placeholder="+91 701073672X">
+                    </div>
+                    <div class="profile-modal-actions">
+                        <button type="submit" class="btn btn-primary btn-large btn-full">Continue</button>
+                    </div>
+                </form>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    modal.classList.add('active');
+    document.getElementById('profileCompleteForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const regNumber = document.getElementById('profileRegNumber').value;
+        const dept = document.getElementById('profileDept').value;
+        const year = document.getElementById('profileYear').value;
+        const phone = document.getElementById('profilePhone').value;
+        try {
+            await updateDoc(doc(db, 'users', user.uid), { registerNumber: regNumber, department: dept, year, phone, updatedAt: serverTimestamp() });
+            modal.classList.remove('active');
+            window.location.href = 'dashboard.html';
+        } catch (error) { alert('Failed to update profile: ' + error.message); }
+    });
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
 }
 
 export async function handleRegister(e) {
