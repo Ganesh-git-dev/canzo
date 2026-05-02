@@ -30,12 +30,7 @@
                 <div class="auth-header">
                     <img src="https://canzo.in/assets/image/canzo official logo.png" alt="Canzo Logo" class="auth-logo">
                     <h1 class="auth-title">Create Account</h1>
-                    <p class="auth-subtitle">Join Canzo and skip the queue</p>
-                </div>
-
-                <div class="role-selector" id="registerRoleSelector">
-                    <button class="role-btn active" data-role="student" type="button" onclick="selectRole('register', 'student')">Student</button>
-                    <button class="role-btn" data-role="canteen" type="button" onclick="selectRole('register', 'canteen')">Canteen Admin</button>
+                    <p class="auth-subtitle">Join Canzo and skip the queue at Food Court</p>
                 </div>
 
                 <form id="registerForm" onsubmit="handleRegister(event)">
@@ -54,22 +49,17 @@
                         <input type="tel" id="phone" class="form-input" placeholder="+91 701073672X" required>
                     </div>
 
-                    <div class="form-group student-only-fields">
-                        <label class="form-label" for="college">Select College</label>
-                        <select id="college" class="form-select" required>
-                            <option value="">Choose your college...</option>
-                            <option value="easa" selected>EASA College of Engineering and Technology</option>
+                    <div class="form-group">
+                        <label class="form-label" for="department">Department</label>
+                        <select id="department" class="form-select" required>
+                            <option value="">Choose your department...</option>
+                            <option value="cse">Computer Science & Engineering</option>
+                            <option value="ece">Electronics & Communication</option>
+                            <option value="eee">Electrical & Electronics</option>
+                            <option value="mech">Mechanical Engineering</option>
+                            <option value="civil">Civil Engineering</option>
+                            <option value="it">Information Technology</option>
                         </select>
-                    </div>
-
-                    <div class="form-group canteen-only-fields">
-                        <label class="form-label" for="canteenName">Canteen Name</label>
-                        <input type="text" id="canteenName" class="form-input" placeholder="Main Canteen, Snack Corner, etc.">
-                    </div>
-
-                    <div class="form-group canteen-only-fields">
-                        <label class="form-label" for="canteenLocation">Canteen Location</label>
-                        <input type="text" id="canteenLocation" class="form-input" placeholder="Block A, Ground Floor">
                     </div>
 
                     <div class="form-group">

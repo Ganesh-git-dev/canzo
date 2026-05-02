@@ -18,12 +18,22 @@ function selectRole(page, role) {
 
 function handleLogin(e) {
     e.preventDefault();
-    const role = localStorage.getItem('canzo_role');
-    console.log('handleLogin → canzo_role from storage:', role);
-    const finalRole = role || 'student';
-    console.log('handleLogin → Final role:', finalRole);
-    localStorage.setItem('canzo_user_role', finalRole);
-    window.location.href = finalRole === 'canteen' ? 'canteen-dashboard.html' : 'dashboard.html';
+    const email = document.getElementById('email')?.value || '';
+    const password = document.getElementById('password')?.value || '';
+
+    // Canteen admin hardcoded check
+    if (email === 'test@ecet.com' && password === 'test') {
+        localStorage.setItem('canzo_user_role', 'canteen');
+        localStorage.setItem('canzo_user_email', email);
+        localStorage.setItem('canzo_canteen_name', 'Food Court');
+        window.location.href = 'canteen-dashboard.html';
+        return;
+    }
+
+    // Student login (any other credentials)
+    localStorage.setItem('canzo_user_role', 'student');
+    localStorage.setItem('canzo_user_email', email);
+    window.location.href = 'dashboard.html';
 }
 
 function handleRegister(e) {
@@ -159,13 +169,15 @@ const MenuSystem = {
 const CanteenSystem = {
     SETTINGS_KEY: 'canzo_canteen_settings',
     defaults: {
-        name: 'Main Canteen',
-        location: 'Block A, Ground Floor',
-        hours: { morning: '8:30 AM - 11:30 AM', lunch: '11:30 AM - 2:00 PM', evening: '3:00 PM - 6:30 PM' },
+        name: 'Food Court',
+        location: 'Near Mess',
+        phone: '+91 70107 3672X',
+        manager: 'Ganesh',
+        hours: { morning: '10:40 AM - 11:00 AM', lunch: '12:30 PM - 1:10 PM', evening: '2:50 PM - 3:05 PM' },
         isOpen: true,
         autoReject: false,
         autoRejectTime: 10,
-        maxOrders: 20,
+        maxOrders: 30,
     },
     load() {
         try {

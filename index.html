@@ -494,8 +494,8 @@
             <button class="role-modal-close" id="roleModalClose">&times;</button>
             <div class="role-modal-header">
                 <img src="https://canzo.in/assets/image/canzo official logo.png" alt="Canzo" class="role-modal-logo">
-                <h2>Continue as</h2>
-                <p>Choose how you'll use Canzo</p>
+                <h2>Welcome to Food Court</h2>
+                <p>Sign up to pre-order your meals at EASA College</p>
             </div>
             <div class="role-modal-options">
                 <button class="role-option" data-role="student" data-action="register">
@@ -547,9 +547,8 @@
         document.querySelectorAll('.role-option').forEach(option => {
             option.addEventListener('click', () => {
                 const role = option.dataset.role;
-                localStorage.setItem('canzo_role', role);
                 if (role === 'canteen') {
-                    window.location.href = 'register.html';
+                    window.location.href = 'login.html';
                 } else {
                     window.location.href = 'register.html';
                 }
