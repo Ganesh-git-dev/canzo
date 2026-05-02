@@ -279,6 +279,10 @@
     margin-bottom: 24px;
 }
 
+[data-theme="dark"] .auth-logo {
+    filter: brightness(0) invert(1);
+}
+
 .auth-title {
     font-family: var(--font-primary);
     font-size: 28px;
