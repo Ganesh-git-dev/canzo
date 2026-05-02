@@ -103,7 +103,7 @@ function convertToFirestoreValue(value) {
 
 const SEED_USERS = [
     { email: 'student@ecet.com', password: 'student123', userData: {
-        email: 'student@ecet.com', name: 'Ganesh Kumar', role: 'student',
+        email: 'student@ecet.com', name: 'Ganesh', role: 'student',
         phone: '+91 7010736721', department: 'cse', year: '3rd Year',
         registerNumber: 'E720524AM001', balance: 0, totalOrders: 0, totalSpent: 0,
         favoriteItems: [], dietaryPreferences: [],

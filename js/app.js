@@ -141,7 +141,7 @@ function applyRoleUI() {
     document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
         e.preventDefault();
         await signOut(auth);
-        window.location.href = 'index.html';
+        window.location.href = 'login.html';
     });
 
     document.querySelectorAll('.app-nav-link').forEach(link => {
@@ -328,6 +328,7 @@ function renderCanteenDashboardIfActive() {
     const liveQueue = document.getElementById('liveOrderQueue');
     if (!liveQueue) return;
     renderLiveQueue(liveQueue);
+    renderCanteenDashboardStats();
 }
 
 function renderCanteenOrdersIfActive() {
@@ -677,79 +678,86 @@ function animateCounter(el) {
     requestAnimationFrame(step);
 }
 
+function renderCanteenDashboardStats() {
+    const todayOrders = allOrders.filter(o => {
+        const d = new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt);
+        return d.toDateString() === new Date().toDateString();
+    });
+    const todayRevenue = todayOrders.filter(o => o.status === 'picked').reduce((sum, o) => sum + o.total, 0);
+    const activeOrders = allOrders.filter(o => ['pending', 'accepted', 'preparing', 'ready'].includes(o.status)).length;
+    const totalOrdersCount = allOrders.length;
+
+    const todayEl = document.getElementById('statTodayOrders');
+    const revenueEl = document.getElementById('statTodayRevenue');
+    const activeEl = document.getElementById('statItemsSold');
+    const totalEl = document.getElementById('statAvgPrep');
+    if (todayEl) todayEl.textContent = todayOrders.length;
+    if (revenueEl) revenueEl.textContent = `₹${todayRevenue.toLocaleString('en-IN')}`;
+    if (activeEl) activeEl.textContent = activeOrders;
+    if (totalEl) totalEl.textContent = totalOrdersCount;
+}
+
 function initCanteenDashboard() {
     const liveQueue = document.getElementById('liveOrderQueue');
     if (!liveQueue) return;
 
-    function renderLiveQueue(queue) {
-        const orders = allOrders.filter(o => o.status === 'pending' || o.status === 'accepted' || o.status === 'preparing');
-        queue.innerHTML = '';
-
-        if (orders.length === 0) {
-            queue.innerHTML = '<p class="canteen-live-empty">No active orders</p>';
-            return;
-        }
-
-        orders.forEach(order => {
-            const div = document.createElement('div');
-            div.className = `live-order-card live-order-card--${order.status}`;
-            div.dataset.id = order.id;
-            div.innerHTML = `
-                <div class="live-order-header">
-                    <span class="live-order-id">${order.id.slice(-6)}</span>
-                    <span class="live-order-status live-order-status--${order.status}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
-                </div>
-                <div class="live-order-student">${order.studentName}</div>
-                <div class="live-order-items">${order.items.map(i => `${i.qty}x ${i.name}`).join(', ')}</div>
-                <div class="live-order-slot">${order.slot} · ₹${order.total}</div>
-                <div class="live-order-actions">
-                    ${order.status === 'pending' ? `
-                        <button class="live-order-btn live-order-btn--accept" data-action="accept">Accept</button>
-                        <button class="live-order-btn live-order-btn--reject" data-action="reject">Reject</button>
-                    ` : ''}
-                    ${order.status === 'accepted' ? `
-                        <button class="live-order-btn live-order-btn--prepare" data-action="prepare">Start Preparing</button>
-                    ` : ''}
-                    ${order.status === 'preparing' ? `
-                        <button class="live-order-btn live-order-btn--ready" data-action="ready">Mark Ready</button>
-                    ` : ''}
-                </div>
-            `;
-            queue.appendChild(div);
-        });
-
-        queue.querySelectorAll('.live-order-btn').forEach(btn => {
-            btn.addEventListener('click', async function() {
-                const action = this.dataset.action;
-                const card = this.closest('.live-order-card');
-                const orderId = card.dataset.id;
-                const statusMap = { accept: 'accepted', reject: 'cancelled', prepare: 'preparing', ready: 'ready' };
-                await updateDoc(doc(db, 'orders', orderId), { status: statusMap[action], updatedAt: new Date().toISOString() });
-            });
-        });
-    }
-
     renderLiveQueue(liveQueue);
-
-    const totalOrders = allOrders.length;
-    const totalRevenue = allOrders.filter(o => o.status === 'picked').reduce((sum, o) => sum + o.total, 0);
-    const activeOrders = allOrders.filter(o => ['pending', 'accepted', 'preparing', 'ready'].includes(o.status)).length;
-    const todayOrders = allOrders.filter(o => {
-        const d = new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt);
-        return d.toDateString() === new Date().toDateString();
-    }).length;
-
-    const totalEl = document.querySelector('.stat-card[data-stat="total"] .stat-card-value');
-    const revenueEl = document.querySelector('.stat-card[data-stat="revenue"] .stat-card-value');
-    const activeEl = document.querySelector('.stat-card[data-stat="active"] .stat-card-value');
-    const todayEl = document.querySelector('.stat-card[data-stat="today"] .stat-card-value');
-    if (totalEl) totalEl.textContent = totalOrders;
-    if (revenueEl) revenueEl.textContent = `₹${totalRevenue}`;
-    if (activeEl) activeEl.textContent = activeOrders;
-    if (todayEl) todayEl.textContent = todayOrders;
+    renderCanteenDashboardStats();
 
     const canteenNameEl = document.querySelector('.app-header-subtitle');
     if (canteenNameEl) canteenNameEl.textContent = `${canteenSettings.name} · ${canteenSettings.location}`;
+}
+
+function renderLiveQueue(queue) {
+    const orders = allOrders.filter(o => o.status === 'pending' || o.status === 'accepted' || o.status === 'preparing');
+    queue.innerHTML = '';
+
+    if (orders.length === 0) {
+        queue.innerHTML = '<div class="canteen-empty-state">No active orders</div>';
+        return;
+    }
+
+    orders.forEach(order => {
+        const div = document.createElement('div');
+        div.className = `canteen-order-item${order.status === 'preparing' ? ' canteen-order-item--preparing' : ''}`;
+        div.dataset.id = order.id;
+        const timeStr = new Date(order.createdAt?.seconds ? order.createdAt.seconds * 1000 : order.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        div.innerHTML = `
+            <div class="canteen-order-item-header">
+                <span class="canteen-order-id">#${order.id.slice(-4)}</span>
+                <span class="canteen-order-time">${timeStr}</span>
+                ${order.status !== 'pending' ? `<span class="canteen-order-status canteen-order-status--${order.status}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>` : ''}
+            </div>
+            <div class="canteen-order-student">${order.studentName}${order.slot ? ' · ' + order.slot : ''}</div>
+            <div class="canteen-order-items">${order.items.map(i => `${i.name} ×${i.qty}`).join(', ')}</div>
+            <div class="canteen-order-footer">
+                <span class="canteen-order-total">₹${order.total}</span>
+                ${order.status === 'pending' ? `
+                    <div class="canteen-order-actions">
+                        <button class="btn-accept" data-action="accept">Accept</button>
+                        <button class="btn-reject" data-action="reject">Reject</button>
+                    </div>
+                ` : ''}
+                ${order.status === 'accepted' ? `
+                    <button class="btn-accept" data-action="prepare">Start Preparing</button>
+                ` : ''}
+                ${order.status === 'preparing' ? `
+                    <button class="btn-ready" data-action="ready">Mark Ready</button>
+                ` : ''}
+            </div>
+        `;
+        queue.appendChild(div);
+    });
+
+    queue.querySelectorAll('.btn-accept, .btn-reject, .btn-ready').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const action = this.dataset.action;
+            const card = this.closest('.canteen-order-item');
+            const orderId = card.dataset.id;
+            const statusMap = { accept: 'accepted', reject: 'cancelled', prepare: 'preparing', ready: 'ready' };
+            await updateDoc(doc(db, 'orders', orderId), { status: statusMap[action], updatedAt: new Date().toISOString() });
+        });
+    });
 }
 
 function renderCanteenMenuList(list) {
@@ -1027,6 +1035,18 @@ function initCanteenSettings() {
 }
 
 function renderAnalytics(chartBars, topItemsList, frequencyGrid, lowDemandList) {
+    const pickedOrders = allOrders.filter(o => o.status === 'picked');
+    const totalRevenue = pickedOrders.reduce((sum, o) => sum + o.total, 0);
+    const totalOrdersCount = allOrders.length;
+    const avgOrderValue = totalOrdersCount > 0 ? Math.round(totalRevenue / totalOrdersCount) : 0;
+
+    const totalRevEl = document.getElementById('analyticsTotalRevenue');
+    const totalOrdEl = document.getElementById('analyticsTotalOrders');
+    const avgOrdEl = document.getElementById('analyticsAvgOrder');
+    if (totalRevEl) totalRevEl.textContent = `₹${totalRevenue.toLocaleString('en-IN')}`;
+    if (totalOrdEl) totalOrdEl.textContent = totalOrdersCount;
+    if (avgOrdEl) avgOrdEl.textContent = `₹${avgOrderValue}`;
+
     const days = [];
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     for (let i = 6; i >= 0; i--) {
@@ -1045,7 +1065,7 @@ function renderAnalytics(chartBars, topItemsList, frequencyGrid, lowDemandList) 
         const maxRev = Math.max(...days.map(d => d.revenue), 1);
         chartBars.innerHTML = days.map(d => {
             const height = Math.max((d.revenue / maxRev) * 100, 4);
-            return `<div class="analytics-bar" title="₹${d.revenue}"><div class="analytics-bar-fill" style="height: ${height}%"></div><span class="analytics-bar-label">${d.name}</span></div>`;
+            return `<div class="analytics-bar-group"><div class="analytics-bar" style="height: ${height}%;"><span class="analytics-bar-value">₹${d.revenue >= 1000 ? (d.revenue / 1000).toFixed(1) + 'k' : d.revenue}</span></div><span class="analytics-bar-label">${d.name}</span></div>`;
         }).join('');
     }
 
@@ -1056,15 +1076,15 @@ function renderAnalytics(chartBars, topItemsList, frequencyGrid, lowDemandList) 
             itemCounts[item.name].qty += item.qty;
             itemCounts[item.name].revenue += item.qty * item.price;
         }); });
-        const topItems = Object.values(itemCounts).sort((a, b) => b.qty - a.qty).slice(0, 8);
+        const topItems = Object.values(itemCounts).sort((a, b) => b.qty - a.qty).slice(0, 6);
 
         if (topItems.length === 0) {
-            topItemsList.innerHTML = '<p class="analytics-empty">No sales data yet</p>';
+            topItemsList.innerHTML = '<div class="analytics-empty-state">No data yet</div>';
         } else {
             const maxQty = topItems[0].qty;
             topItemsList.innerHTML = topItems.map((item, i) => {
                 const pct = (item.qty / maxQty) * 100;
-                return `<div class="analytics-ranking-item"><span class="analytics-ranking-num">#${i + 1}</span><span class="analytics-ranking-name">${item.name}</span><span class="analytics-ranking-bar"><span class="analytics-ranking-fill" style="width: ${pct}%"></span></span><span class="analytics-ranking-qty">${item.qty} sold</span></div>`;
+                return `<div class="analytics-top-item"><span class="analytics-top-item-rank">${i + 1}</span><div class="analytics-top-item-info"><div class="analytics-top-item-name">${item.name}</div><div class="analytics-top-item-meta">${item.qty} orders · ₹${item.revenue.toLocaleString('en-IN')}</div></div><div class="analytics-top-item-bar"><div class="analytics-top-item-bar-fill" style="width: ${pct}%;"></div></div></div>`;
             }).join('');
         }
     }
@@ -1076,10 +1096,20 @@ function renderAnalytics(chartBars, topItemsList, frequencyGrid, lowDemandList) 
             studentCounts[o.studentName].orders++;
             studentCounts[o.studentName].spent += o.total;
         });
-        const students = Object.values(studentCounts).sort((a, b) => b.orders - a.orders).slice(0, 12);
+        const students = Object.values(studentCounts).sort((a, b) => b.orders - a.orders);
+        const uniqueStudents = students.length;
+        const avgOrdersPerStudent = uniqueStudents > 0 ? (totalOrdersCount / uniqueStudents).toFixed(1) : 0;
+        const powerUsers = students.filter(s => s.orders >= 5).length;
 
-        if (students.length === 0) {
-            frequencyGrid.innerHTML = '<p class="analytics-empty">No student data yet</p>';
+        const freqValueEl = frequencyGrid.querySelector('.analytics-frequency-value');
+        if (freqValueEl) {
+            frequencyGrid.innerHTML = `
+                <div class="analytics-frequency-card"><div class="analytics-frequency-value">${uniqueStudents}</div><div class="analytics-frequency-label">Unique Students</div></div>
+                <div class="analytics-frequency-card"><div class="analytics-frequency-value">${avgOrdersPerStudent}</div><div class="analytics-frequency-label">Avg Orders/Student</div></div>
+                <div class="analytics-frequency-card"><div class="analytics-frequency-value">${powerUsers}</div><div class="analytics-frequency-label">Power Users (5+ orders)</div></div>
+            `;
+        } else if (students.length === 0) {
+            frequencyGrid.innerHTML = '<div class="analytics-empty-state">No data yet</div>';
         } else {
             frequencyGrid.innerHTML = students.map(s => {
                 const initials = s.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
@@ -1093,12 +1123,12 @@ function renderAnalytics(chartBars, topItemsList, frequencyGrid, lowDemandList) 
         allOrders.forEach(o => o.items.forEach(i => { itemOrderCount[i.name] = (itemOrderCount[i.name] || 0) + i.qty; }));
         const lowItems = menuItems.filter(item => (itemOrderCount[item.name] || 0) === 0);
         if (lowItems.length === 0) {
-            lowDemandList.innerHTML = '<p class="analytics-empty">All items have been ordered!</p>';
+            lowDemandList.innerHTML = '<div class="analytics-empty-state">No data yet</div>';
         } else {
             lowDemandList.innerHTML = lowItems.map(item => `
-                <div class="analytics-low-item">
-                    <img src="${item.image}" alt="${item.name}">
-                    <div><strong>${item.name}</strong><span>₹${item.price}</span></div>
+                <div class="analytics-waste-item">
+                    <div class="analytics-waste-item-info"><span class="analytics-waste-item-name">${item.name}</span><span class="analytics-waste-item-count">0 orders</span></div>
+                    <span class="analytics-waste-item-badge analytics-waste-item-badge--very-low">No Orders</span>
                 </div>
             `).join('');
         }

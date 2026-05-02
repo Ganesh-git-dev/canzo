@@ -52,7 +52,7 @@
                     Settings
                 </a>
                 <div class="app-nav-divider"></div>
-                <a href="index.html" class="app-nav-link">
+                <a href="login.html" class="app-nav-link">
                     <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                     Back to Landing
                 </a>
@@ -92,7 +92,7 @@
                         <div class="stat-card-icon stat-card-icon--revenue">
                             <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
                         </div>
-                        <div class="stat-card-value">₹48,250</div>
+                        <div class="stat-card-value" id="analyticsTotalRevenue">₹0</div>
                         <div class="stat-card-label">Total Revenue</div>
                     </div>
 
@@ -100,7 +100,7 @@
                         <div class="stat-card-icon stat-card-icon--orders">
                             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
                         </div>
-                        <div class="stat-card-value">342</div>
+                        <div class="stat-card-value" id="analyticsTotalOrders">0</div>
                         <div class="stat-card-label">Total Orders</div>
                     </div>
 
@@ -108,7 +108,7 @@
                         <div class="stat-card-icon stat-card-icon--items">
                             <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
                         </div>
-                        <div class="stat-card-value">₹141</div>
+                        <div class="stat-card-value" id="analyticsAvgOrder">₹0</div>
                         <div class="stat-card-label">Avg Order Value</div>
                     </div>
 
@@ -116,7 +116,7 @@
                         <div class="stat-card-icon stat-card-icon--time">
                             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         </div>
-                        <div class="stat-card-value">11 min</div>
+                        <div class="stat-card-value" id="analyticsAvgPrep">0 min</div>
                         <div class="stat-card-label">Avg Prep Time</div>
                     </div>
                 </div>
@@ -127,14 +127,14 @@
                             <h3 class="content-card-title">Revenue Trend</h3>
                         </div>
                         <div class="content-card-body">
-                            <div class="analytics-bar-chart" id="revenueChart">
-                                <div class="analytics-bar-group"><div class="analytics-bar" style="height: 45%;"><span class="analytics-bar-value">₹5.2k</span></div><span class="analytics-bar-label">Mon</span></div>
-                                <div class="analytics-bar-group"><div class="analytics-bar" style="height: 62%;"><span class="analytics-bar-value">₹7.1k</span></div><span class="analytics-bar-label">Tue</span></div>
-                                <div class="analytics-bar-group"><div class="analytics-bar" style="height: 55%;"><span class="analytics-bar-value">₹6.3k</span></div><span class="analytics-bar-label">Wed</span></div>
-                                <div class="analytics-bar-group"><div class="analytics-bar analytics-bar--peak" style="height: 85%;"><span class="analytics-bar-value">₹9.8k</span></div><span class="analytics-bar-label">Thu</span></div>
-                                <div class="analytics-bar-group"><div class="analytics-bar" style="height: 72%;"><span class="analytics-bar-value">₹8.3k</span></div><span class="analytics-bar-label">Fri</span></div>
-                                <div class="analytics-bar-group"><div class="analytics-bar" style="height: 30%;"><span class="analytics-bar-value">₹3.5k</span></div><span class="analytics-bar-label">Sat</span></div>
-                                <div class="analytics-bar-group"><div class="analytics-bar" style="height: 20%;"><span class="analytics-bar-value">₹2.3k</span></div><span class="analytics-bar-label">Sun</span></div>
+                            <div class="analytics-bar-chart" id="analyticsRevenueChart">
+                                <div class="analytics-bar-group"><div class="analytics-bar" style="height: 0%;"><span class="analytics-bar-value">₹0</span></div><span class="analytics-bar-label">Mon</span></div>
+                                <div class="analytics-bar-group"><div class="analytics-bar" style="height: 0%;"><span class="analytics-bar-value">₹0</span></div><span class="analytics-bar-label">Tue</span></div>
+                                <div class="analytics-bar-group"><div class="analytics-bar" style="height: 0%;"><span class="analytics-bar-value">₹0</span></div><span class="analytics-bar-label">Wed</span></div>
+                                <div class="analytics-bar-group"><div class="analytics-bar" style="height: 0%;"><span class="analytics-bar-value">₹0</span></div><span class="analytics-bar-label">Thu</span></div>
+                                <div class="analytics-bar-group"><div class="analytics-bar" style="height: 0%;"><span class="analytics-bar-value">₹0</span></div><span class="analytics-bar-label">Fri</span></div>
+                                <div class="analytics-bar-group"><div class="analytics-bar" style="height: 0%;"><span class="analytics-bar-value">₹0</span></div><span class="analytics-bar-label">Sat</span></div>
+                                <div class="analytics-bar-group"><div class="analytics-bar" style="height: 0%;"><span class="analytics-bar-value">₹0</span></div><span class="analytics-bar-label">Sun</span></div>
                             </div>
                         </div>
                     </div>
@@ -144,60 +144,8 @@
                             <h3 class="content-card-title">Top Selling Items</h3>
                         </div>
                         <div class="content-card-body">
-                            <div class="analytics-top-items-list">
-                                <div class="analytics-top-item">
-                                    <span class="analytics-top-item-rank">1</span>
-                                    <div class="analytics-top-item-info">
-                                        <div class="analytics-top-item-name">Chicken Biryani</div>
-                                        <div class="analytics-top-item-meta">89 orders • ₹12,905</div>
-                                    </div>
-                                    <div class="analytics-top-item-bar"><div class="analytics-top-item-bar-fill" style="width: 100%;"></div></div>
-                                </div>
-
-                                <div class="analytics-top-item">
-                                    <span class="analytics-top-item-rank">2</span>
-                                    <div class="analytics-top-item-info">
-                                        <div class="analytics-top-item-name">Veg Burger</div>
-                                        <div class="analytics-top-item-meta">67 orders • ₹5,695</div>
-                                    </div>
-                                    <div class="analytics-top-item-bar"><div class="analytics-top-item-bar-fill" style="width: 75%;"></div></div>
-                                </div>
-
-                                <div class="analytics-top-item">
-                                    <span class="analytics-top-item-rank">3</span>
-                                    <div class="analytics-top-item-info">
-                                        <div class="analytics-top-item-name">Mango Smoothie</div>
-                                        <div class="analytics-top-item-meta">54 orders • ₹4,050</div>
-                                    </div>
-                                    <div class="analytics-top-item-bar"><div class="analytics-top-item-bar-fill" style="width: 61%;"></div></div>
-                                </div>
-
-                                <div class="analytics-top-item">
-                                    <span class="analytics-top-item-rank">4</span>
-                                    <div class="analytics-top-item-info">
-                                        <div class="analytics-top-item-name">Masala Dosa</div>
-                                        <div class="analytics-top-item-meta">48 orders • ₹2,880</div>
-                                    </div>
-                                    <div class="analytics-top-item-bar"><div class="analytics-top-item-bar-fill" style="width: 54%;"></div></div>
-                                </div>
-
-                                <div class="analytics-top-item">
-                                    <span class="analytics-top-item-rank">5</span>
-                                    <div class="analytics-top-item-info">
-                                        <div class="analytics-top-item-name">Veg Fried Rice</div>
-                                        <div class="analytics-top-item-meta">42 orders • ₹3,780</div>
-                                    </div>
-                                    <div class="analytics-top-item-bar"><div class="analytics-top-item-bar-fill" style="width: 47%;"></div></div>
-                                </div>
-
-                                <div class="analytics-top-item">
-                                    <span class="analytics-top-item-rank">6</span>
-                                    <div class="analytics-top-item-info">
-                                        <div class="analytics-top-item-name">Chocolate Pastry</div>
-                                        <div class="analytics-top-item-meta">38 orders • ₹2,090</div>
-                                    </div>
-                                    <div class="analytics-top-item-bar"><div class="analytics-top-item-bar-fill" style="width: 43%;"></div></div>
-                                </div>
+                            <div class="analytics-top-items-list" id="analyticsTopItems">
+                                <div class="analytics-empty-state">No data yet</div>
                             </div>
                         </div>
                     </div>
@@ -207,17 +155,17 @@
                             <h3 class="content-card-title">Order Frequency</h3>
                         </div>
                         <div class="content-card-body">
-                            <div class="analytics-frequency-grid">
+                            <div class="analytics-frequency-grid" id="analyticsFrequencyGrid">
                                 <div class="analytics-frequency-card">
-                                    <div class="analytics-frequency-value">156</div>
+                                    <div class="analytics-frequency-value">0</div>
                                     <div class="analytics-frequency-label">Unique Students</div>
                                 </div>
                                 <div class="analytics-frequency-card">
-                                    <div class="analytics-frequency-value">2.2</div>
+                                    <div class="analytics-frequency-value">0</div>
                                     <div class="analytics-frequency-label">Avg Orders/Student</div>
                                 </div>
                                 <div class="analytics-frequency-card">
-                                    <div class="analytics-frequency-value">23</div>
+                                    <div class="analytics-frequency-value">0</div>
                                     <div class="analytics-frequency-label">Power Users (5+ orders)</div>
                                 </div>
                             </div>
@@ -229,28 +177,8 @@
                             <h3 class="content-card-title">Low Demand Items</h3>
                         </div>
                         <div class="content-card-body">
-                            <div class="analytics-waste-list">
-                                <div class="analytics-waste-item">
-                                    <div class="analytics-waste-item-info">
-                                        <span class="analytics-waste-item-name">Paneer Tikka</span>
-                                        <span class="analytics-waste-item-count">8 orders this week</span>
-                                    </div>
-                                    <span class="analytics-waste-item-badge analytics-waste-item-badge--low">Low</span>
-                                </div>
-                                <div class="analytics-waste-item">
-                                    <div class="analytics-waste-item-info">
-                                        <span class="analytics-waste-item-name">Fresh Salad</span>
-                                        <span class="analytics-waste-item-count">5 orders this week</span>
-                                    </div>
-                                    <span class="analytics-waste-item-badge analytics-waste-item-badge--low">Low</span>
-                                </div>
-                                <div class="analytics-waste-item">
-                                    <div class="analytics-waste-item-info">
-                                        <span class="analytics-waste-item-name">Filter Coffee</span>
-                                        <span class="analytics-waste-item-count">3 orders this week</span>
-                                    </div>
-                                    <span class="analytics-waste-item-badge analytics-waste-item-badge--very-low">Very Low</span>
-                                </div>
+                            <div class="analytics-waste-list" id="analyticsLowDemand">
+                                <div class="analytics-empty-state">No data yet</div>
                             </div>
                         </div>
                     </div>
