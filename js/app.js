@@ -184,13 +184,33 @@ export async function handleRegister(e) {
     const name = document.getElementById('name')?.value || 'User';
     const phone = document.getElementById('phone')?.value || '';
     const department = document.getElementById('department')?.value || '';
+    const year = document.getElementById('year')?.value || '';
+    const registerNumber = document.getElementById('registerNumber')?.value || '';
     const urlParams = new URLSearchParams(window.location.search);
-    const role = urlParams.get('role') || localStorage.getItem('canzo_role') || 'student';
+    const role = urlParams.get('role') || 'student';
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        await setDoc(doc(db, 'users', userCredential.user.uid), {
-            email, name, role, phone, department, createdAt: serverTimestamp()
-        });
+        const userData = {
+            email, name, role, phone, department, year, registerNumber,
+            balance: 0,
+            totalOrders: 0,
+            totalSpent: 0,
+            favoriteItems: [],
+            dietaryPreferences: [],
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+        };
+        if (role === 'canteen') {
+            delete userData.year;
+            delete userData.registerNumber;
+            delete userData.balance;
+            delete userData.totalOrders;
+            delete userData.totalSpent;
+            delete userData.favoriteItems;
+            delete userData.dietaryPreferences;
+            userData.managerName = name;
+        }
+        await setDoc(doc(db, 'users', userCredential.user.uid), userData);
         window.location.href = role === 'canteen' ? 'canteen-dashboard.html' : 'dashboard.html';
     } catch (error) {
         alert('Registration failed: ' + error.message);
@@ -577,15 +597,43 @@ function initCartPage() {
                 studentName: currentUser?.name || 'Student',
                 studentEmail: currentUser?.email || '',
                 studentId: currentUser?.uid || '',
-                items: Cart.items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty, image: i.image })),
-                slot, subtotal, tax, total,
+                registerNumber: currentUser?.registerNumber || '',
+                department: currentUser?.department || '',
+                year: currentUser?.year || '',
+                phone: currentUser?.phone || '',
+                items: Cart.items.map(i => ({
+                    id: i.id,
+                    name: i.name,
+                    price: i.price,
+                    qty: i.qty,
+                    image: i.image,
+                    lineTotal: i.price * i.qty,
+                })),
+                slot,
+                subtotal,
+                tax,
+                taxRate: 0.05,
+                deliveryFee: 0,
+                total,
+                billNumber: `BILL-${Date.now()}`,
                 canteen: canteenSettings.name,
+                canteenId: 'canteen',
                 status: 'pending',
+                paymentMethod: 'cash',
+                paymentStatus: 'pending',
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
             };
 
             await addDoc(collection(db, 'orders'), order);
+
+            const userRef = doc(db, 'users', currentUser?.uid);
+            await updateDoc(userRef, {
+                totalOrders: (currentUser?.totalOrders || 0) + 1,
+                totalSpent: (currentUser?.totalSpent || 0) + total,
+                updatedAt: serverTimestamp(),
+            });
+
             Cart.clear();
             renderCart();
             alert('Order placed successfully!');

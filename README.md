@@ -13,13 +13,17 @@
 ## Current Status: Firebase Migrated
 
 - [x] Marketing landing page with GSAP scroll animations + loading screen
+- [x] "Get Started" links directly to student registration (no role modal)
 - [x] Firebase Authentication (Email/Password) for students and canteen admins
-- [x] Firestore database for orders, menu items, and settings (replaces localStorage)
+- [x] Firestore database for users, orders, menu items, and settings
 - [x] Real-time order sync across all tabs via Firestore `onSnapshot` listeners
 - [x] Real-time menu sync — admin CRUD reflects instantly on student menu
 - [x] Role-based routing (student vs canteen) enforced via Firestore user docs
 - [x] Firestore security rules — students create orders, canteen manages menu/orders
-- [x] Auto-seeded menu (8 items) on first load
+- [x] Pre-seeded database: 18 menu items, 1 student user, 1 admin user, canteen settings
+- [x] Student profile: register number, department, year, phone, balance tracking
+- [x] Order details: bill number, line items, tax, payment status, student metadata
+- [x] Student stats auto-update on checkout (totalOrders, totalSpent)
 - [x] Student checkout creates real Firestore documents → canteen live queue updates instantly
 - [x] Canteen dashboard with live order queue, stats, analytics
 - [x] Canteen menu management (CRUD + stock toggles) with Firestore
@@ -28,7 +32,7 @@
 - [x] Menu search + category tabs + filtering
 - [x] Order history + active orders for students
 - [x] Canteen analytics: revenue chart, top-selling items, student frequency
-- [x] Mobile responsive (sidebar toggle, stacked layouts)
+- [x] Mobile responsive (sidebar toggle, stacked layouts, form rows collapse)
 - [x] Single canteen scope: "Food Court" at EASA College (Near Mess)
 
 ---
@@ -37,9 +41,10 @@
 
 ```
 D:\canzo\
-├── index.html              # Marketing landing page with role selection modal
+├── index.html              # Marketing landing page → direct register link
 ├── login.html              # Login with Firebase Email/Password auth
-├── register.html           # Registration (student or canteen via ?role=canteen)
+├── register.html           # Student registration (name, reg#, dept, year, phone)
+├── seed.html               # One-time database seeder (run after first deploy)
 ├── dashboard.html          # Student dashboard (real stats from Firestore)
 ├── canteens.html           # Food Court card → links to menu
 ├── menu.html               # Food menu (live from Firestore, search, categories)
@@ -61,6 +66,7 @@ D:\canzo\
 │   ├── main.js             # GSAP animations for landing page
 │   ├── app.js              # ES module: Firebase + UI logic (Cart, pages, admin)
 │   ├── firebase-config.js  # Firebase SDK init (Auth + Firestore)
+│   ├── seed.js             # Database seeder (users, menu, settings)
 │   ├── loading.js          # Loading screen animation
 │   ├── clock.js            # Real-time analog clock component
 │   └── cursor.js           # Fluid cursor trail effect
@@ -87,14 +93,36 @@ D:\canzo\
 ## Firestore Collections
 
 ### `users/{userId}`
+**Student:**
 ```js
 {
   email: "student@ecet.com",
-  name: "Ganesh",
-  role: "student" | "canteen",
-  phone: "+91 701073672X",
-  department: "cse",        // students only
-  createdAt: Timestamp
+  name: "Ganesh Kumar",
+  role: "student",
+  phone: "+91 7010736721",
+  department: "cse",
+  year: "3rd Year",
+  registerNumber: "E720524AM001",
+  balance: 0,           // wallet balance (future)
+  totalOrders: 0,       // auto-updated on checkout
+  totalSpent: 0,        // auto-updated on checkout
+  favoriteItems: [],    // array of menu item IDs
+  dietaryPreferences: [],// ["veg", "no-onion"]
+  createdAt: Timestamp,
+  updatedAt: Timestamp
+}
+```
+
+**Canteen Admin:**
+```js
+{
+  email: "admin@ecet.com",
+  name: "Food Court Admin",
+  role: "canteen",
+  phone: "+91 7010736720",
+  managerName: "Ganesh",
+  createdAt: Timestamp,
+  updatedAt: Timestamp
 }
 ```
 
@@ -102,28 +130,45 @@ D:\canzo\
 ```js
 {
   name: "Chicken Biryani",
-  description: "Aromatic basmati rice...",
+  description: "Aromatic basmati rice with tender chicken...",
   price: 145,
   category: "biryani",
   image: "assets/images/biryani.jpg",
   inStock: true,
-  createdAt: Timestamp
+  tags: ["non-veg", "popular", "spicy"],
+  servings: 1,
+  orderCount: 0,        // auto-tracked for analytics
+  revenue: 0,           // total revenue from this item
+  createdAt: Timestamp,
+  updatedAt: Timestamp
 }
 ```
 
 ### `orders/{orderId}` (auto-generated ID)
 ```js
 {
-  studentName: "Ganesh",
+  studentName: "Ganesh Kumar",
   studentEmail: "student@ecet.com",
   studentId: "firebase-uid",
-  items: [{ id, name, price, qty, image }],
+  registerNumber: "E720524AM001",
+  department: "cse",
+  year: "3rd Year",
+  phone: "+91 7010736721",
+  items: [
+    { id, name, price, qty, image, lineTotal: price * qty }
+  ],
   slot: "Lunch Break",
   subtotal: 145,
   tax: 7,
+  taxRate: 0.05,
+  deliveryFee: 0,
   total: 152,
+  billNumber: "BILL-1714650000000",
   canteen: "Food Court",
-  status: "pending" | "accepted" | "preparing" | "ready" | "picked" | "cancelled",
+  canteenId: "canteen",
+  status: "pending",    // pending → accepted → preparing → ready → picked
+  paymentMethod: "cash",
+  paymentStatus: "pending", // pending → paid
   createdAt: ISO string,
   updatedAt: ISO string
 }
@@ -133,14 +178,21 @@ D:\canzo\
 ```js
 {
   name: "Food Court",
-  location: "Near Mess",
-  phone: "+91 70107 3672X",
+  location: "Near Mess, EASA College",
+  phone: "+91 7010736720",
   manager: "Ganesh",
   hours: { morning: "10:40 AM - 11:00 AM", lunch: "12:30 PM - 1:10 PM", evening: "2:50 PM - 3:05 PM" },
   isOpen: true,
   autoReject: false,
   autoRejectTime: 10,
-  maxOrders: 30
+  maxOrders: 30,
+  taxRate: 0.05,
+  deliveryFee: 0,
+  currency: "INR",
+  acceptOrders: true,
+  lastUpdated: ISO string,
+  createdAt: Timestamp,
+  updatedAt: Timestamp
 }
 ```
 
@@ -236,19 +288,18 @@ Deployed to Vercel: `https://canzo-phi.vercel.app/`
 ## Navigation Flow
 
 ```
-index.html → role modal → register.html → Firebase auth → dashboard.html (student)
-                                                  → canteen-dashboard.html (canteen)
+index.html → register.html → Firebase auth → dashboard.html (student)
+                                           → canteen-dashboard.html (admin via seed)
 
 Student: dashboard → canteens → menu → cart → orders
 Canteen: dashboard → menu → orders → analytics → settings
 ```
 
----
-
 ## Data Flow
 
 ```
 Student: menu (Firestore) → add to cart (localStorage) → checkout → orders (Firestore)
+         → auto-updates user.totalOrders, user.totalSpent
 Canteen: live queue (Firestore listener) → accept/prepare/ready → student orders update instantly
 Menu: canteen CRUD (Firestore) → student menu updates via onSnapshot listener
 ```
@@ -259,10 +310,9 @@ Menu: canteen CRUD (Firestore) → student menu updates via onSnapshot listener
 
 | Key | Type | Description |
 |---|---|---|
-| `canzo_cart` | JSON array | Cart items (client-only) |
+| `canzo_cart` | JSON array | Cart items `[{ id, name, price, image, qty }]` (client-only) |
 | `canzo_visited` | `'true'` | Loading screen skip flag |
 | `canzo_theme` | `'dark'` / `'light'` | Theme preference |
-| `canzo_role` | `'student'` / `'canteen'` | Role selection before registration |
 
 ---
 
@@ -277,13 +327,22 @@ Menu: canteen CRUD (Firestore) → student menu updates via onSnapshot listener
 ### 2. Apply Security Rules
 Copy contents of `firestore.rules` into Firestore → Rules tab
 
-### 3. Create Canteen Admin User
-1. Authentication → Users → Add user: `test@ecet.com` / `test`
-2. Copy the User UID
-3. Firestore → Create `users` collection → Document ID = UID
-4. Fields: `email` (test@ecet.com), `name` (Food Court), `role` (canteen)
+### 3. Seed the Database
+1. Serve the project locally: `python -m http.server 8000`
+2. Visit `http://localhost:8000/seed.html`
+3. Click **"Seed Database"**
+4. This creates:
+   - **Student:** `student@ecet.com` / `student123`
+   - **Admin:** `admin@ecet.com` / `admin123`
+   - 18 menu items (biryani, burgers, noodles, drinks, etc.)
+   - Canteen settings (Food Court config)
 
-### 4. Configure API Keys
+### 4. Verify
+- Login as student: `student@ecet.com` → `dashboard.html`
+- Login as admin: `admin@ecet.com` → `canteen-dashboard.html`
+- Menu page should show 18 items
+
+### 5. Configure API Keys
 Update `js/firebase-config.js` with your Firebase project config
 
 ---

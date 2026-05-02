@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seed Database - Canzo</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; }
+        h1 { color: #7c3aed; }
+        button { background: #7c3aed; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #6d28d9; }
+        pre { background: #f5f0ff; padding: 16px; border-radius: 8px; overflow-x: auto; }
+        .status { margin-top: 16px; white-space: pre-line; }
+    </style>
+</head>
+<body>
+    <h1>Canzo Database Seeder</h1>
+    <p>Click below to create pre-defined users, menu items, and settings.</p>
+    <button id="seedBtn">Seed Database</button>
+    <div class="status" id="status"></div>
+
+    <script type="module">
+        import { seedDatabase } from './js/seed.js';
+
+        const statusEl = document.getElementById('status');
+        const originalLog = console.log;
+        console.log = (...args) => {
+            originalLog(...args);
+            statusEl.textContent += args.join(' ') + '\n';
+        };
+
+        document.getElementById('seedBtn').addEventListener('click', async () => {
+            statusEl.textContent = 'Seeding...\n\n';
+            await seedDatabase();
+        });
+    </script>
+</body>
+</html>
