@@ -931,6 +931,13 @@
     flex: 1;
 }
 
+.cart-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+}
+
 .cart-item-name {
     font-weight: 600;
     color: var(--color-primary);

@@ -1184,8 +1184,8 @@ function initCartPage() {
         '<div class="cart-item" data-id="' + item.id + '">' +
         '<div class="cart-item-image"><img src="' + item.image + '" alt="' + item.name + '"></div>' +
         '<div class="cart-item-details"><h4 class="cart-item-name">' + item.name + '</h4><span class="cart-item-price">₹' + item.price + '</span></div>' +
-        '<div class="cart-item-qty"><button class="qty-btn qty-minus" data-id="' + item.id + '">−</button><span class="qty-value">' + item.qty + '</span><button class="qty-btn qty-plus" data-id="' + item.id + '">+</button></div>' +
-        '<button class="cart-item-remove" data-id="' + item.id + '">&times;</button></div>'
+        '<div class="cart-item-actions"><div class="cart-item-qty"><button class="qty-btn qty-minus" data-id="' + item.id + '">−</button><span class="qty-value">' + item.qty + '</span><button class="qty-btn qty-plus" data-id="' + item.id + '">+</button></div>' +
+        '<button class="cart-item-remove" data-id="' + item.id + '">&times;</button></div></div>'
     ).join('');
     cartItems.querySelectorAll('.qty-plus').forEach(btn => btn.addEventListener('click', function() { Cart.updateQty(this.dataset.id, (Cart.items.find(i => i.id === this.dataset.id)?.qty || 0) + 1); initCartPage(); }));
     cartItems.querySelectorAll('.qty-minus').forEach(btn => btn.addEventListener('click', function() { Cart.updateQty(this.dataset.id, (Cart.items.find(i => i.id === this.dataset.id)?.qty || 0) - 1); initCartPage(); }));
@@ -1202,7 +1202,7 @@ function initCartPage() {
     document.getElementById('checkoutBtn')?.addEventListener('click', async function() {
         if (!currentUser) { alert('Please login first'); return; }
         if (Cart.items.length === 0) { alert('Cart is empty'); return; }
-        const slotSelect = document.getElementById('slotSelect');
+        const slotSelect = document.getElementById('cartSlot');
         const slot = slotSelect?.value || 'Lunch Break';
         const items = Cart.items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty, image: i.image, lineTotal: i.price * i.qty }));
         const order = {
