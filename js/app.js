@@ -98,6 +98,8 @@ let canteenSettings = {
     isOpen: true, autoReject: false, autoRejectTime: 10, maxOrders: 30,
 };
 
+let firestoreListenersStarted = false;
+
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
@@ -111,6 +113,14 @@ onAuthStateChanged(auth, async (user) => {
             showProfileCompleteModal(user);
         }
         applyRoleUI();
+        // Only start Firestore listeners once, after a user is confirmed
+        if (!firestoreListenersStarted) {
+            firestoreListenersStarted = true;
+            seedMenuIfEmpty();
+            listenToMenu();
+            listenToOrders();
+            loadCanteenSettings();
+        }
     } else { currentUser = null; }
 });
 
@@ -171,6 +181,7 @@ function applyRoleUI() {
 }
 
 async function seedMenuIfEmpty() {
+    if (!db) return;
     const snapshot = await getDocs(collection(db, 'menuItems'));
     if (snapshot.empty) { for (const item of SEED_MENU) { await addDoc(collection(db, 'menuItems'), { ...item, createdAt: serverTimestamp() }); } }
 }
@@ -346,7 +357,9 @@ function initApp() {
     const googleRegisterBtn = document.getElementById('googleRegisterBtn');
     if (googleRegisterBtn) googleRegisterBtn.addEventListener('click', () => { console.log('Google register btn clicked'); handleGoogleLogin(); });
 
-    seedMenuIfEmpty(); listenToMenu(); listenToOrders(); loadCanteenSettings();
+    // NOTE: seedMenuIfEmpty, listenToMenu, listenToOrders, loadCanteenSettings are now
+    // started inside onAuthStateChanged (above) after a user is confirmed, to avoid
+    // calling collection(db, ...) before db is ready on pages like login.html.
     initMenuPage(); initCartPage(); initDashboardPage(); initStudentOrders(); initStudentBills();
     initCanteenDashboard(); initCanteenMenu(); initCanteenOrders(); initCanteenBills(); initCanteenAnalytics(); initCanteenSettings();
     initFavoritesPage();
