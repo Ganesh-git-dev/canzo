@@ -58,6 +58,8 @@ const Favorites = {
     items: [],
     load() { try { const d = localStorage.getItem(FAVORITES_KEY); this.items = d ? JSON.parse(d) : []; } catch { this.items = []; } return this.items; },
     save() { localStorage.setItem(FAVORITES_KEY, JSON.stringify(this.items)); this.updateBadges(); },
+    // FIX: added clear() method (was called in initStudentSettingsPage but was missing)
+    clear() { this.items = []; this.save(); },
     toggle(item) {
         const idx = this.items.findIndex(i => i.id === item.id);
         if (idx > -1) { this.items.splice(idx, 1); }
@@ -131,7 +133,7 @@ function applyRoleUI() {
                 <a href="canteen-bills.html" class="app-nav-link${currentPage === 'canteen-bills.html' ? ' active' : ''}"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Bills</a>
                 <div class="app-nav-divider"></div>
                 <a href="canteen-analytics.html" class="app-nav-link${currentPage === 'canteen-analytics.html' ? ' active' : ''}"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analytics</a>
-                <a href="canteen-settings.html" class="app-nav-link${currentPage === 'canteen-settings.html' ? ' active' : ''}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</a>
+                <a href="canteen-settings.html" class="app-nav-link${currentPage === 'canteen-settings.html' ? ' active' : ''}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</a>
                 <div class="app-nav-divider"></div>
                 <a href="#" id="logoutBtn" class="app-nav-link"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>Logout</a>
             `;
@@ -207,9 +209,9 @@ export async function handleGoogleLogin() {
     } catch (error) {
         if (error.code === 'auth/popup-closed-by-user') return;
         if (error.code === 'auth/unauthorized-domain') {
-            alert('This domain is not authorized for Google Sign-In. Current domain: ' + window.location.hostname + '\n\nPlease add it in Firebase Console -> Authentication -> Settings -> Authorized domains.\n\nFor local testing, also add: localhost');
+            alert('This domain is not authorized for Google Sign-In. Current domain: ' + window.location.hostname + '\n\nPlease add it in Firebase Console → Authentication → Settings → Authorized domains.\n\nFor local testing, also add: localhost');
         } else if (error.code === 'auth/operation-not-allowed') {
-            alert('Google Sign-In is not enabled. Please enable it in Firebase Console -> Authentication -> Sign-in method.');
+            alert('Google Sign-In is not enabled. Please enable it in Firebase Console → Authentication → Sign-in method.');
         } else {
             alert('Google login failed (' + error.code + '): ' + error.message);
         }
@@ -333,11 +335,13 @@ function initApp() {
         document.addEventListener('click', e => { if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && sidebar.classList.contains('open')) sidebar.classList.remove('open'); });
     }
 
+    // Attach auth form handlers
     const loginForm = document.getElementById('loginForm');
     if (loginForm) loginForm.addEventListener('submit', handleLogin);
     const registerForm = document.getElementById('registerForm');
     if (registerForm) registerForm.addEventListener('submit', handleRegister);
 
+    // Attach Google Sign-In button handlers
     const googleLoginBtn = document.getElementById('googleLoginBtn');
     if (googleLoginBtn) googleLoginBtn.addEventListener('click', () => { console.log('Google login btn clicked'); handleGoogleLogin(); });
     const googleRegisterBtn = document.getElementById('googleRegisterBtn');
@@ -352,23 +356,200 @@ function initApp() {
 
 if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initApp); } else { initApp(); }
 
+// ============================================
+// MENU RENDERING
+// ============================================
 
-function listenToMenu() { onSnapshot(query(collection(db, 'menuItems'), orderBy('createdAt', 'asc')), (snap) => { menuItems = []; snap.forEach(d => menuItems.push({ id: d.id, ...d.data() })); renderMenuIfActive(); renderCanteenMenuIfActive(); renderAnalyticsIfActive(); }); }
+// FIX: merged duplicate renderMenuItems into a single function with optional filterCat param
+function renderMenuItems(container, filterCat) {
+    Favorites.load();
+    let items = menuItems.filter(i => i.inStock);
+    if (filterCat && filterCat !== 'all') items = items.filter(i => i.category === filterCat);
+    if (items.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div><h3 class="empty-title">No items available</h3><p class="empty-text">Check back later for new dishes</p></div>';
+        return;
+    }
+    container.innerHTML = items.map(item =>
+        '<div class="menu-item" data-id="' + item.id + '" data-category="' + item.category + '" data-name="' + item.name.toLowerCase() + '" data-desc="' + item.description.toLowerCase() + '">' +
+        '<div class="menu-item-image"><img src="' + item.image + '" alt="' + item.name + '" loading="lazy"></div>' +
+        '<div class="menu-item-details">' +
+        '<div class="menu-item-header"><h4 class="menu-item-name">' + item.name + '</h4><span class="menu-item-price">₹' + item.price + '</span></div>' +
+        '<p class="menu-item-desc">' + item.description + '</p>' +
+        '<button class="menu-item-fav ' + (Favorites.has(item.id) ? 'active' : '') + '" data-id="' + item.id + '">' +
+        '<svg viewBox="0 0 24 24" fill="' + (Favorites.has(item.id) ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>' +
+        '<button class="menu-item-add" data-id="' + item.id + '">Add to Cart</button>' +
+        '</div></div>'
+    ).join('');
 
-function listenToOrders() { onSnapshot(query(collection(db, 'orders'), orderBy('createdAt', 'desc')), (snap) => { allOrders = []; snap.forEach(d => allOrders.push({ id: d.id, ...d.data() })); renderStudentOrdersIfActive(); renderStudentBillsIfActive(); renderCanteenDashboardIfActive(); renderCanteenOrdersIfActive(); renderCanteenBillsIfActive(); renderAnalyticsIfActive(); renderDashboardIfActive(); }); }
+    container.querySelectorAll('.menu-item-fav').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.closest('.menu-item').dataset.id;
+            const item = menuItems.find(i => i.id === id);
+            if (item) { Favorites.toggle(item); this.classList.toggle('active'); this.querySelector('svg').setAttribute('fill', Favorites.has(id) ? 'currentColor' : 'none'); }
+        });
+    });
+    container.querySelectorAll('.menu-item-add').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.closest('.menu-item').dataset.id;
+            const item = menuItems.find(i => i.id === id);
+            if (item) { Cart.add({ id: item.id, name: item.name, price: item.price, image: item.image }); const t = this.textContent; this.textContent = 'Added ✓'; this.style.background = '#10b981'; setTimeout(() => { this.textContent = t; this.style.background = ''; }, 1500); }
+        });
+    });
+}
 
-async function loadCanteenSettings() { const d = await getDoc(doc(db, 'settings', 'canteen')); if (d.exists()) canteenSettings = { ...canteenSettings, ...d.data() }; }
+function listenToMenu() {
+    onSnapshot(query(collection(db, 'menuItems'), orderBy('createdAt', 'asc')), (snap) => {
+        menuItems = [];
+        snap.forEach(d => menuItems.push({ id: d.id, ...d.data() }));
+        renderMenuIfActive();
+        renderCanteenMenuIfActive();
+        renderAnalyticsIfActive();
+    });
+}
 
-function renderMenuIfActive() { const c = document.querySelector('.menu-items'); if (!c) return; c.dataset.initialized = 'true'; renderMenuItems(c, 'all'); }
-function renderCanteenMenuIfActive() { const l = document.getElementById('menuManagementList'); if (!l) return; renderCanteenMenuList(l); }
-function renderStudentOrdersIfActive() { const a = document.querySelector('.order-list:not(.order-history-list)'); if (!a) return; renderStudentOrders(a); }
-function renderStudentBillsIfActive() { const b = document.querySelector('.bills-list'); if (!b) return; renderStudentBills(b); }
+function listenToOrders() {
+    onSnapshot(query(collection(db, 'orders'), orderBy('createdAt', 'desc')), (snap) => {
+        allOrders = [];
+        snap.forEach(d => allOrders.push({ id: d.id, ...d.data() }));
+        renderStudentOrdersIfActive();
+        renderStudentBillsIfActive();
+        renderCanteenDashboardIfActive();
+        renderCanteenOrdersIfActive();
+        renderCanteenBillsIfActive();
+        renderAnalyticsIfActive();
+        renderDashboardIfActive();
+    });
+}
+
+async function loadCanteenSettings() {
+    const d = await getDoc(doc(db, 'settings', 'canteen'));
+    if (d.exists()) canteenSettings = { ...canteenSettings, ...d.data() };
+}
+
+// ============================================
+// REACTIVE RENDER TRIGGERS
+// ============================================
+
+function renderMenuIfActive() { const c = document.querySelector('.menu-items'); if (!c) return; renderMenuItems(c, 'all'); }
+
+// FIX: renderCanteenMenuIfActive now calls renderCanteenMenuList which is defined below
+function renderCanteenMenuIfActive() { const l = document.getElementById('menuManagementList'); if (!l) return; renderCanteenMenuList(l, 'all'); }
+
+// FIX: renderStudentOrdersIfActive delegates to initStudentOrders (renderStudentOrders was never defined)
+function renderStudentOrdersIfActive() { const a = document.querySelector('.order-list'); if (!a) return; initStudentOrders(); }
+
+// FIX: renderStudentBillsIfActive delegates to initStudentBills (renderStudentBills was never defined)
+function renderStudentBillsIfActive() { const b = document.querySelector('.bills-list'); if (!b) return; initStudentBills(); }
+
 function renderCanteenDashboardIfActive() { const q = document.getElementById('liveOrderQueue'); if (!q) return; renderLiveQueue(q); renderCanteenDashboardStats(); }
+
 function renderCanteenOrdersIfActive() { const t = document.getElementById('canteenOrdersTableBody'); if (!t) return; renderOrdersTable(t); }
-function renderCanteenBillsIfActive() { const b = document.querySelector('.canteen-bills-list'); if (!b) return; renderCanteenBills(b); }
-function renderAnalyticsIfActive() { const c = document.getElementById('analyticsRevenueChart'); const t = document.getElementById('analyticsTopItems'); if (!c && !t) return; renderAnalytics(c, t, document.getElementById('analyticsFrequencyGrid'), document.getElementById('analyticsLowDemand')); }
+
+// FIX: renderCanteenBillsIfActive delegates to initCanteenBills (renderCanteenBills was never defined)
+function renderCanteenBillsIfActive() { const b = document.querySelector('.canteen-bills-list'); if (!b) return; initCanteenBills(); }
+
+function renderAnalyticsIfActive() {
+    const c = document.getElementById('analyticsRevenueChart');
+    const t = document.getElementById('analyticsTopItems');
+    if (!c && !t) return;
+    renderAnalytics(c, t, document.getElementById('analyticsFrequencyGrid'), document.getElementById('analyticsLowDemand'));
+}
+
 function renderDashboardIfActive() { const e = document.querySelector('.stat-card[data-stat="total"] .stat-card-value'); if (!e) return; updateDashboardStats(); }
 
+// ============================================
+// CANTEEN MENU LIST RENDERER (extracted so it can be called from multiple places)
+// ============================================
+
+function renderCanteenMenuList(list, filterCat) {
+    let items = menuItems;
+    if (filterCat && filterCat !== 'all') items = items.filter(i => i.category === filterCat);
+    const catLabels = { biryani: 'Biryani', pizza: 'Pizza', burgers: 'Burgers', drinks: 'Drinks', snacks: 'Snacks', desserts: 'Desserts', 'short-bites': 'Short Bites', pastry: 'Pastry', maggie: 'Maggie', 'fried-rice': 'Fried Rice', juices: 'Juices' };
+    if (items.length === 0) {
+        list.innerHTML = '<div class="empty-state" id="menuEmptyState"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div><h3 class="empty-title">No menu items yet</h3><p class="empty-text">Click "Add Item" to create your first menu item</p></div>';
+        return;
+    }
+    list.innerHTML = items.map(item =>
+        '<div class="menu-management-item" data-id="' + item.id + '" data-category="' + item.category + '">' +
+        '<div class="menu-management-item-image"><img src="' + item.image + '" alt="' + item.name + '" loading="lazy"></div>' +
+        '<div class="menu-management-item-details">' +
+        '<div class="menu-management-item-header"><h4 class="menu-management-item-name">' + item.name + '</h4><span class="menu-management-item-category">' + (catLabels[item.category] || item.category) + '</span></div>' +
+        '<p class="menu-management-item-desc">' + item.description + '</p>' +
+        '<div class="menu-management-item-meta">' +
+        '<span class="menu-management-item-price">₹' + item.price + '</span>' +
+        '<label class="menu-management-item-toggle">' +
+        '<input type="checkbox" ' + (item.inStock ? 'checked' : '') + ' data-id="' + item.id + '">' +
+        '<span class="menu-management-item-toggle-slider"></span>' +
+        '<span class="menu-management-item-toggle-label">' + (item.inStock ? 'In Stock' : 'Out of Stock') + '</span>' +
+        '</label></div></div>' +
+        '<div class="menu-management-item-actions">' +
+        '<button class="menu-management-item-edit" data-id="' + item.id + '"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
+        '<button class="menu-management-item-delete" data-id="' + item.id + '"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>' +
+        '</div></div>'
+    ).join('');
+
+    list.querySelectorAll('.menu-management-item-toggle input').forEach(cb => {
+        cb.addEventListener('change', async function() {
+            const id = this.dataset.id;
+            const inStock = this.checked;
+            try {
+                await updateDoc(doc(db, 'menuItems', id), { inStock, updatedAt: serverTimestamp() });
+            } catch(e) { alert('Failed to update stock: ' + e.message); this.checked = !inStock; }
+        });
+    });
+    list.querySelectorAll('.menu-management-item-edit').forEach(btn => {
+        btn.addEventListener('click', function() { window.openMenuModal(this.dataset.id); });
+    });
+    list.querySelectorAll('.menu-management-item-delete').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            if (!confirm('Delete this item?')) return;
+            try {
+                await deleteDoc(doc(db, 'menuItems', this.dataset.id));
+            } catch(e) { alert('Failed to delete: ' + e.message); }
+        });
+    });
+}
+
+// ============================================
+// ORDERS TABLE RENDERER (extracted for reuse)
+// ============================================
+
+function renderOrdersTable(tableBody) {
+    if (!tableBody) return;
+    if (allOrders.length === 0) { tableBody.innerHTML = '<div class="empty-state"><p>No orders found</p></div>'; return; }
+    const statusColors = { pending: 'yellow', accepted: 'blue', preparing: 'orange', ready: 'purple', picked: 'green', cancelled: 'red' };
+    tableBody.innerHTML = allOrders.map(o => {
+        const items = (o.items || []).map(i => i.name + ' x' + i.qty).join(', ');
+        return '<div class="canteen-order-row" data-id="' + o.id + '">' +
+            '<div class="canteen-order-col"><span class="order-id">#' + (o.billNumber || o.id.slice(0, 8)) + '</span></div>' +
+            '<div class="canteen-order-col"><div class="canteen-order-student">' + (o.studentName || 'Unknown') + '</div><div class="canteen-order-items">' + items + '</div></div>' +
+            '<div class="canteen-order-col">' + (o.slot || '-') + '</div>' +
+            '<div class="canteen-order-col"><span class="status-badge status-badge--' + (statusColors[o.status] || 'yellow') + '">' + o.status + '</span></div>' +
+            '<div class="canteen-order-col"><select class="form-select form-select--sm order-status-select" data-id="' + o.id + '">' +
+            '<option value="pending"' + (o.status === 'pending' ? ' selected' : '') + '>Pending</option>' +
+            '<option value="accepted"' + (o.status === 'accepted' ? ' selected' : '') + '>Accepted</option>' +
+            '<option value="preparing"' + (o.status === 'preparing' ? ' selected' : '') + '>Preparing</option>' +
+            '<option value="ready"' + (o.status === 'ready' ? ' selected' : '') + '>Ready</option>' +
+            '<option value="picked"' + (o.status === 'picked' ? ' selected' : '') + '>Picked</option>' +
+            '<option value="cancelled"' + (o.status === 'cancelled' ? ' selected' : '') + '>Cancelled</option>' +
+            '</select></div></div>';
+    }).join('');
+
+    tableBody.querySelectorAll('.order-status-select').forEach(sel => {
+        sel.addEventListener('change', async function() {
+            const id = this.dataset.id;
+            const newStatus = this.value;
+            try {
+                // FIX: was 'serverOrders' (undefined) — corrected to serverTimestamp()
+                await updateDoc(doc(db, 'orders', id), { status: newStatus, updatedAt: serverTimestamp() });
+            } catch(e) { alert('Failed to update status: ' + e.message); location.reload(); }
+        });
+    });
+}
+
+// ============================================
+// FAVORITES PAGE
+// ============================================
 
 function initFavoritesPage() {
     const container = document.getElementById('favoritesList');
@@ -378,7 +559,12 @@ function initFavoritesPage() {
         container.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div><h3 class="empty-title">No favorites yet</h3><p class="empty-text">Tap the heart icon on any menu item to add it here</p><a href="menu.html" class="btn btn-primary" style="margin-top:16px;">Browse Menu</a></div>';
         return;
     }
-    container.innerHTML = Favorites.items.map(item => '<div class="menu-item" data-id="' + item.id + '"><div class="menu-item-image"><img src="' + item.image + '" alt="' + item.name + '" loading="lazy"></div><div class="menu-item-details"><div class="menu-item-header"><h4 class="menu-item-name">' + item.name + '</h4><span class="menu-item-price">₹' + item.price + '</span></div><button class="menu-item-add" data-id="' + item.id + '">Add to Cart</button></div></div>').join('');
+    container.innerHTML = Favorites.items.map(item =>
+        '<div class="menu-item" data-id="' + item.id + '">' +
+        '<div class="menu-item-image"><img src="' + item.image + '" alt="' + item.name + '" loading="lazy"></div>' +
+        '<div class="menu-item-details"><div class="menu-item-header"><h4 class="menu-item-name">' + item.name + '</h4><span class="menu-item-price">₹' + item.price + '</span></div>' +
+        '<button class="menu-item-add" data-id="' + item.id + '">Add to Cart</button></div></div>'
+    ).join('');
     container.querySelectorAll('.menu-item-add').forEach(btn => {
         btn.addEventListener('click', function() {
             const id = this.dataset.id;
@@ -387,6 +573,10 @@ function initFavoritesPage() {
         });
     });
 }
+
+// ============================================
+// STUDENT SETTINGS PAGE
+// ============================================
 
 function initStudentSettingsPage() {
     const nameInput = document.getElementById('studentName');
@@ -426,22 +616,40 @@ function initStudentSettingsPage() {
         if (confirm('Clear cart?')) { Cart.clear(); alert('Cart cleared'); }
     });
     document.getElementById('clearFavoritesBtn')?.addEventListener('click', () => {
+        // FIX: Favorites.clear() now exists (added to Favorites object above)
         if (confirm('Clear favorites?')) { Favorites.clear(); Favorites.updateBadges(); alert('Favorites cleared'); }
     });
 }
 
+// ============================================
+// DASHBOARD
+// ============================================
+
 function updateDashboardStats() {
-    const myOrders = currentUser ? allOrders.filter(o => o.studentId === currentUser.uid) : [];
+    const myOrders = currentUser ? allOrders.filter(o => o.userId === currentUser.uid) : [];
     const totalOrders = myOrders.length;
-    const thisMonth = myOrders.filter(o => { const d = new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt); const n = new Date(); return d.getMonth() === n.getMonth() && d.getFullYear() === n.getFullYear(); }).length;
+    const thisMonth = myOrders.filter(o => {
+        const d = new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt);
+        const n = new Date();
+        return d.getMonth() === n.getMonth() && d.getFullYear() === n.getFullYear();
+    }).length;
     const totalSpent = myOrders.filter(o => o.status === 'picked').reduce((s, o) => s + (o.total || 0), 0);
     const tE = document.querySelector('.stat-card[data-stat="total"] .stat-card-value');
     const mE = document.querySelector('.stat-card[data-stat="month"] .stat-card-value');
     const sE = document.querySelector('.stat-card[data-stat="spent"] .stat-card-value');
-    if (tE) tE.textContent = totalOrders; if (mE) mE.textContent = thisMonth; if (sE) sE.textContent = `₹${totalSpent}`;
+    if (tE) tE.textContent = totalOrders;
+    if (mE) mE.textContent = thisMonth;
+    if (sE) sE.textContent = '₹' + totalSpent;
     const sG = document.querySelector('.stats-grid');
-    if (sG) { const ob = new IntersectionObserver(en => { en.forEach(e => { if (e.isIntersecting) { document.querySelectorAll('.stat-card-value').forEach(el => animateCounter(el)); ob.disconnect(); } }); }, { threshold: 0.5 }); ob.observe(sG); }
+    if (sG) {
+        const ob = new IntersectionObserver(en => { en.forEach(e => { if (e.isIntersecting) { document.querySelectorAll('.stat-card-value').forEach(el => animateCounter(el)); ob.disconnect(); } }); }, { threshold: 0.5 });
+        ob.observe(sG);
+    }
 }
+
+// ============================================
+// MENU PAGE
+// ============================================
 
 function initMenuPage() {
     const catContainer = document.querySelector('.menu-categories');
@@ -475,79 +683,37 @@ function initMenuPage() {
     }
 }
 
-function renderMenuItems(container, filterCat) {
-    Favorites.load();
-    let items = menuItems.filter(i => i.inStock);
-    if (filterCat && filterCat !== 'all') items = items.filter(i => i.category === filterCat);
-    if (items.length === 0) { container.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div><h3 class="empty-title">No items available</h3><p class="empty-text">Check back later for new dishes</p></div>'; return; }
-    container.innerHTML = items.map(item => '<div class="menu-item" data-id="' + item.id + '" data-category="' + item.category + '" data-name="' + item.name.toLowerCase() + '" data-desc="' + item.description.toLowerCase() + '"><div class="menu-item-image"><img src="' + item.image + '" alt="' + item.name + '" loading="lazy"></div><div class="menu-item-details"><div class="menu-item-header"><h4 class="menu-item-name">' + item.name + '</h4><span class="menu-item-price">₹' + item.price + '</span></div><p class="menu-item-desc">' + item.description + '</p><button class="menu-item-fav ' + (Favorites.has(item.id) ? 'active' : '') + '" data-id="' + item.id + '"><svg viewBox="0 0 24 24" fill="' + (Favorites.has(item.id) ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button><button class="menu-item-add" data-id="' + item.id + '">Add to Cart</button></div></div>').join('');
-    container.querySelectorAll('.menu-item-fav').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const id = this.closest('.menu-item').dataset.id;
-            const item = menuItems.find(i => i.id === id);
-            if (item) { Favorites.toggle(item); this.classList.toggle('active'); this.querySelector('svg').setAttribute('fill', Favorites.has(id) ? 'currentColor' : 'none'); }
-        });
-    });
-    container.querySelectorAll('.menu-item-add').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const id = this.closest('.menu-item').dataset.id;
-            const item = menuItems.find(i => i.id === id);
-            if (item) { Cart.add({ id: item.id, name: item.name, price: item.price, image: item.image }); const t = this.textContent; this.textContent = 'Added ✓'; this.style.background = '#10b981'; setTimeout(() => { this.textContent = t; this.style.background = ''; }, 1500); }
-        });
-    });
-}
+// ============================================
+// CANTEEN MENU MANAGEMENT
+// ============================================
 
 function initCanteenMenu() {
     const list = document.getElementById('menuManagementList');
     const catBtns = document.querySelectorAll('#menuCategories .menu-category-btn');
     if (!list) return;
     let currentFilter = 'all';
-    function renderList() {
-        let items = menuItems;
-        if (currentFilter !== 'all') items = items.filter(i => i.category === currentFilter);
-        if (items.length === 0) { list.innerHTML = '<div class="empty-state" id="menuEmptyState"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div><h3 class="empty-title">No menu items yet</h3><p class="empty-text">Click "Add Item" to create your first menu item</p></div>'; return; }
-        const catLabels = { biryani: 'Biryani', pizza: 'Pizza', burgers: 'Burgers', drinks: 'Drinks', snacks: 'Snacks', desserts: 'Desserts', 'short-bites': 'Short Bites', pastry: 'Pastry', maggie: 'Maggie', 'fried-rice': 'Fried Rice', juices: 'Juices' };
-        list.innerHTML = items.map(item => {
-            return '<div class="menu-management-item" data-id="' + item.id + '" data-category="' + item.category + '"><div class="menu-management-item-image"><img src="' + item.image + '" alt="' + item.name + '" loading="lazy"></div><div class="menu-management-item-details"><div class="menu-management-item-header"><h4 class="menu-management-item-name">' + item.name + '</h4><span class="menu-management-item-category">' + (catLabels[item.category] || item.category) + '</span></div><p class="menu-management-item-desc">' + item.description + '</p><div class="menu-management-item-meta"><span class="menu-management-item-price">₹' + item.price + '</span><label class="menu-management-item-toggle"><input type="checkbox" ' + (item.inStock ? 'checked' : '') + ' data-id="' + item.id + '"><span class="menu-management-item-toggle-slider"></span><span class="menu-management-item-toggle-label">' + (item.inStock ? 'In Stock' : 'Out of Stock') + '</span></label></div></div><div class="menu-management-item-actions"><button class="menu-management-item-edit" data-id="' + item.id + '"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="menu-management-item-delete" data-id="' + item.id + '"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></div></div>';
-        }).join('');
-        list.querySelectorAll('.menu-management-item-toggle input').forEach(cb => {
-            cb.addEventListener('change', async function() {
-                const id = this.dataset.id;
-                const inStock = this.checked;
-                try {
-                    await updateDoc(doc(db, 'menuItems', id), { inStock, updatedAt: serverTimestamp() });
-                } catch(e) { alert('Failed to update stock: ' + e.message); this.checked = !inStock; }
-            });
-        });
-        list.querySelectorAll('.menu-management-item-edit').forEach(btn => {
-            btn.addEventListener('click', function() { openMenuModal(this.dataset.id); });
-        });
-        list.querySelectorAll('.menu-management-item-delete').forEach(btn => {
-            btn.addEventListener('click', async function() {
-                if (!confirm('Delete this item?')) return;
-                try {
-                    await deleteDoc(doc(db, 'menuItems', this.dataset.id));
-                } catch(e) { alert('Failed to delete: ' + e.message); }
-            });
-        });
-    }
-    renderList();
+
+    renderCanteenMenuList(list, currentFilter);
+
     catBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             catBtns.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             currentFilter = this.dataset.category;
-            renderList();
+            renderCanteenMenuList(list, currentFilter);
         });
     });
+
     const addBtn = document.getElementById('addMenuItemBtn');
-    if (addBtn) addBtn.addEventListener('click', () => openMenuModal(null));
+    if (addBtn) addBtn.addEventListener('click', () => window.openMenuModal(null));
+
     const modal = document.getElementById('menuModal');
     const closeBtn = document.getElementById('menuModalClose');
     const cancelBtn = document.getElementById('menuModalCancel');
     const form = document.getElementById('menuForm');
     if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
     if (cancelBtn) cancelBtn.addEventListener('click', () => modal.classList.remove('active'));
+
     let editingId = null;
     window.openMenuModal = function(id) {
         editingId = id || null;
@@ -566,6 +732,7 @@ function initCanteenMenu() {
         }
         modal.classList.add('active');
     };
+
     if (form) form.addEventListener('submit', async function(e) {
         e.preventDefault();
         const data = {
@@ -589,6 +756,10 @@ function initCanteenMenu() {
     });
 }
 
+// ============================================
+// CANTEEN ORDERS
+// ============================================
+
 function initCanteenOrders() {
     const tableBody = document.getElementById('canteenOrdersTableBody');
     const tabs = document.querySelectorAll('#canteenOrdersTabs .canteen-orders-tab');
@@ -597,6 +768,7 @@ function initCanteenOrders() {
     const searchInput = document.getElementById('orderSearchInput');
     if (!tableBody) return;
     let currentTab = 'active';
+
     function getFilteredOrders() {
         let orders = allOrders;
         if (currentTab === 'active') orders = orders.filter(o => !['picked', 'cancelled'].includes(o.status));
@@ -610,6 +782,7 @@ function initCanteenOrders() {
         if (q) orders = orders.filter(o => (o.studentName || '').toLowerCase().includes(q) || (o.billNumber || '').toLowerCase().includes(q));
         return orders;
     }
+
     function renderTable() {
         const orders = getFilteredOrders();
         document.querySelectorAll('#canteenOrdersTabs .canteen-orders-tab').forEach(t => {
@@ -626,18 +799,32 @@ function initCanteenOrders() {
         const statusColors = { pending: 'yellow', accepted: 'blue', preparing: 'orange', ready: 'purple', picked: 'green', cancelled: 'red' };
         tableBody.innerHTML = orders.map(o => {
             const items = (o.items || []).map(i => i.name + ' x' + i.qty).join(', ');
-            return '<div class="canteen-order-row" data-id="' + o.id + '"><div class="canteen-order-col"><span class="order-id">#' + (o.billNumber || o.id.slice(0,8)) + '</span></div><div class="canteen-order-col"><div class="canteen-order-student">' + (o.studentName || 'Unknown') + '</div><div class="canteen-order-items">' + items + '</div></div><div class="canteen-order-col">' + (o.slot || '-') + '</div><div class="canteen-order-col"><span class="status-badge status-badge--' + (statusColors[o.status] || 'yellow') + '">' + o.status + '</span></div><div class="canteen-order-col"><select class="form-select form-select--sm order-status-select" data-id="' + o.id + '"><option value="pending"' + (o.status === 'pending' ? ' selected' : '') + '>Pending</option><option value="accepted"' + (o.status === 'accepted' ? ' selected' : '') + '>Accepted</option><option value="preparing"' + (o.status === 'preparing' ? ' selected' : '') + '>Preparing</option><option value="ready"' + (o.status === 'ready' ? ' selected' : '') + '>Ready</option><option value="picked"' + (o.status === 'picked' ? ' selected' : '') + '>Picked</option><option value="cancelled"' + (o.status === 'cancelled' ? ' selected' : '') + '>Cancelled</option></select></div></div>';
+            return '<div class="canteen-order-row" data-id="' + o.id + '">' +
+                '<div class="canteen-order-col"><span class="order-id">#' + (o.billNumber || o.id.slice(0, 8)) + '</span></div>' +
+                '<div class="canteen-order-col"><div class="canteen-order-student">' + (o.studentName || 'Unknown') + '</div><div class="canteen-order-items">' + items + '</div></div>' +
+                '<div class="canteen-order-col">' + (o.slot || '-') + '</div>' +
+                '<div class="canteen-order-col"><span class="status-badge status-badge--' + (statusColors[o.status] || 'yellow') + '">' + o.status + '</span></div>' +
+                '<div class="canteen-order-col"><select class="form-select form-select--sm order-status-select" data-id="' + o.id + '">' +
+                '<option value="pending"' + (o.status === 'pending' ? ' selected' : '') + '>Pending</option>' +
+                '<option value="accepted"' + (o.status === 'accepted' ? ' selected' : '') + '>Accepted</option>' +
+                '<option value="preparing"' + (o.status === 'preparing' ? ' selected' : '') + '>Preparing</option>' +
+                '<option value="ready"' + (o.status === 'ready' ? ' selected' : '') + '>Ready</option>' +
+                '<option value="picked"' + (o.status === 'picked' ? ' selected' : '') + '>Picked</option>' +
+                '<option value="cancelled"' + (o.status === 'cancelled' ? ' selected' : '') + '>Cancelled</option>' +
+                '</select></div></div>';
         }).join('');
         tableBody.querySelectorAll('.order-status-select').forEach(sel => {
             sel.addEventListener('change', async function() {
                 const id = this.dataset.id;
                 const newStatus = this.value;
                 try {
+                    // FIX: was 'serverOrders' (undefined) — corrected to serverTimestamp()
                     await updateDoc(doc(db, 'orders', id), { status: newStatus, updatedAt: serverTimestamp() });
                 } catch(e) { alert('Failed to update status: ' + e.message); location.reload(); }
             });
         });
     }
+
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
             tabs.forEach(t => t.classList.remove('active'));
@@ -652,6 +839,10 @@ function initCanteenOrders() {
     renderTable();
 }
 
+// ============================================
+// CANTEEN DASHBOARD
+// ============================================
+
 function initCanteenDashboard() {
     const statTodayOrders = document.getElementById('statTodayOrders');
     const statTodayRevenue = document.getElementById('statTodayRevenue');
@@ -659,26 +850,16 @@ function initCanteenDashboard() {
     const statAvgPrep = document.getElementById('statAvgPrep');
     const liveQueue = document.getElementById('liveOrderQueue');
     const statusToggle = document.getElementById('canteenStatusToggle');
-    if (statTodayOrders) {
-        const today = new Date(); today.setHours(0,0,0,0);
-        const todaysOrders = allOrders.filter(o => {
-            const d = new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt);
-            return d >= today;
-        });
-        statTodayOrders.textContent = todaysOrders.length;
-        const revenue = todaysOrders.filter(o => o.status === 'picked').reduce((s, o) => s + (o.total || 0), 0);
-        statTodayRevenue.textContent = '₹' + revenue;
-        statItemsSold.textContent = allOrders.filter(o => !['picked', 'cancelled'].includes(o.status)).length;
-        statAvgPrep.textContent = allOrders.length;
-    }
+    if (!statTodayOrders) return;
+    renderCanteenDashboardStats();
     if (liveQueue) renderLiveQueue(liveQueue);
     if (statusToggle) {
         loadCanteenSettings().then(() => {
-            const label = statusToggle.querySelector('#statusLabel');
-            const dot = statusToggle.querySelector('#statusDot');
+            const label = statusToggle.querySelector('.canteen-status-label');
+            const dot = statusToggle.querySelector('.canteen-status-dot');
             function updateUI() {
                 if (label) label.textContent = canteenSettings.isOpen ? 'Open' : 'Closed';
-                if (dot) { dot.className = 'canteen-status-dot canteen-status-dot--' + (canteenSettings.isOpen ? 'open' : 'closed'); }
+                if (dot) dot.className = 'canteen-status-dot canteen-status-dot--' + (canteenSettings.isOpen ? 'open' : 'closed');
             }
             updateUI();
             statusToggle.style.cursor = 'pointer';
@@ -693,12 +874,40 @@ function initCanteenDashboard() {
     }
 }
 
+function renderCanteenDashboardStats() {
+    const statTodayOrders = document.getElementById('statTodayOrders');
+    const statTodayRevenue = document.getElementById('statTodayRevenue');
+    const statItemsSold = document.getElementById('statItemsSold');
+    const statAvgPrep = document.getElementById('statAvgPrep');
+    if (!statTodayOrders) return;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const todaysOrders = allOrders.filter(o => {
+        const d = new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt);
+        return d >= today;
+    });
+    statTodayOrders.textContent = todaysOrders.length;
+    const revenue = todaysOrders.filter(o => o.status === 'picked').reduce((s, o) => s + (o.total || 0), 0);
+    if (statTodayRevenue) statTodayRevenue.textContent = '₹' + revenue;
+    if (statItemsSold) statItemsSold.textContent = allOrders.filter(o => !['picked', 'cancelled'].includes(o.status)).length;
+    if (statAvgPrep) statAvgPrep.textContent = allOrders.length;
+}
+
 function renderLiveQueue(container) {
     const active = allOrders.filter(o => !['picked', 'cancelled'].includes(o.status));
     if (active.length === 0) { container.innerHTML = '<div class="canteen-empty-state">No active orders</div>'; return; }
-    container.innerHTML = active.map(o => {
-        return '<div class="canteen-live-order" data-id="' + o.id + '"><div class="canteen-live-order-header"><span class="canteen-live-order-id">#' + (o.billNumber || o.id.slice(0,8)) + '</span><span class="status-badge status-badge--' + (o.status === 'pending' ? 'yellow' : o.status === 'accepted' ? 'blue' : o.status === 'preparing' ? 'orange' : 'purple') + '">' + o.status + '</span></div><div class="canteen-live-order-customer">' + (o.studentName || 'Unknown') + '</div><div class="canteen-live-order-items">' + (o.items || []).map(i => i.name + ' x' + i.qty).join(', ') + '</div><div class="canteen-live-order-actions"><button class="btn btn-sm btn-accept" data-id="' + o.id + '" data-action="accepted">Accept</button><button class="btn btn-sm btn-reject" data-id="' + o.id + '" data-action="cancelled">Reject</button><button class="btn btn-sm btn-ready" data-id="' + o.id + '" data-action="preparing">Preparing</button><button class="btn btn-sm btn-pick" data-id="' + o.id + '" data-action="ready">Ready</button></div></div>';
-    }).join('');
+    container.innerHTML = active.map(o =>
+        '<div class="canteen-live-order" data-id="' + o.id + '">' +
+        '<div class="canteen-live-order-header"><span class="canteen-live-order-id">#' + (o.billNumber || o.id.slice(0, 8)) + '</span>' +
+        '<span class="status-badge status-badge--' + (o.status === 'pending' ? 'yellow' : o.status === 'accepted' ? 'blue' : o.status === 'preparing' ? 'orange' : 'purple') + '">' + o.status + '</span></div>' +
+        '<div class="canteen-live-order-customer">' + (o.studentName || 'Unknown') + '</div>' +
+        '<div class="canteen-live-order-items">' + (o.items || []).map(i => i.name + ' x' + i.qty).join(', ') + '</div>' +
+        '<div class="canteen-live-order-actions">' +
+        '<button class="btn btn-sm btn-accept" data-id="' + o.id + '" data-action="accepted">Accept</button>' +
+        '<button class="btn btn-sm btn-reject" data-id="' + o.id + '" data-action="cancelled">Reject</button>' +
+        '<button class="btn btn-sm btn-ready" data-id="' + o.id + '" data-action="preparing">Preparing</button>' +
+        '<button class="btn btn-sm btn-pick" data-id="' + o.id + '" data-action="ready">Ready</button>' +
+        '</div></div>'
+    ).join('');
     container.querySelectorAll('.btn-accept, .btn-reject, .btn-ready, .btn-pick').forEach(btn => {
         btn.addEventListener('click', async function() {
             const id = this.dataset.id;
@@ -709,6 +918,10 @@ function renderLiveQueue(container) {
         });
     });
 }
+
+// ============================================
+// CANTEEN SETTINGS
+// ============================================
 
 function initCanteenSettings() {
     const saveBtn = document.getElementById('saveSettingsBtn');
@@ -750,7 +963,7 @@ function initCanteenSettings() {
         try {
             const snap = await getDocs(collection(db, 'orders'));
             const batch = [];
-            snap.forEach(d => batch.push(deleteDoc(doc(db, 'orders', d.id)));
+            snap.forEach(d => batch.push(deleteDoc(doc(db, 'orders', d.id))));
             await Promise.all(batch);
             alert('Orders cleared!');
         } catch(e) { alert('Failed: ' + e.message); }
@@ -760,7 +973,7 @@ function initCanteenSettings() {
         try {
             const snap = await getDocs(collection(db, 'menuItems'));
             const batch = [];
-            snap.forEach(d => batch.push(deleteDoc(doc(db, 'menuItems', d.id)));
+            snap.forEach(d => batch.push(deleteDoc(doc(db, 'menuItems', d.id))));
             await Promise.all(batch);
             await seedMenuIfEmpty();
             alert('Menu reset!');
@@ -768,21 +981,155 @@ function initCanteenSettings() {
     });
 }
 
+// ============================================
+// STUDENT ORDERS
+// ============================================
+
 function initStudentOrders() {
     const orderList = document.querySelector('.order-list:not(.order-history-list)');
     const historyList = document.querySelector('.order-history-list');
     if (!orderList) return;
     const active = allOrders.filter(o => o.studentId === currentUser?.uid && !['picked', 'cancelled'].includes(o.status));
     const history = allOrders.filter(o => o.studentId === currentUser?.uid && ['picked', 'cancelled'].includes(o.status));
-    if (active.length === 0) { orderList.innerHTML = '<div class="empty-state"><p>No active orders</p></div>'; } else {
-        orderList.innerHTML = active.map(o => '<div class="order-card"><div class="order-card-header"><span class="order-id">#' + (o.billNumber || o.id.slice(0,8)) + '</span><span class="status-badge status-badge--' + (o.status === 'pending' ? 'yellow' : o.status === 'accepted' ? 'blue' : o.status === 'preparing' ? 'orange' : 'purple') + '">' + o.status + '</span></div><div class="order-card-items">' + (o.items || []).map(i => i.name + ' x' + i.qty).join(', ') + '</div><div class="order-card-total">₹' + (o.total || 0) + '</div></div>').join('');
+    if (active.length === 0) {
+        orderList.innerHTML = '<div class="empty-state"><p>No active orders</p></div>';
+    } else {
+        orderList.innerHTML = active.map(o =>
+            '<div class="order-card">' +
+            '<div class="order-card-header"><span class="order-id">#' + (o.billNumber || o.id.slice(0, 8)) + '</span>' +
+            '<span class="status-badge status-badge--' + (o.status === 'pending' ? 'yellow' : o.status === 'accepted' ? 'blue' : o.status === 'preparing' ? 'orange' : 'purple') + '">' + o.status + '</span></div>' +
+            '<div class="order-card-items">' + (o.items || []).map(i => i.name + ' x' + i.qty).join(', ') + '</div>' +
+            '<div class="order-card-total">₹' + (o.total || 0) + '</div></div>'
+        ).join('');
     }
     if (historyList) {
-        if (history.length === 0) { historyList.innerHTML = '<div class="empty-state"><p>No order history</p></div>'; } else {
-            historyList.innerHTML = history.map(o => '<div class="order-card"><div class="order-card-header"><span class="order-id">#' + (o.billNumber || o.id.slice(0,8)) + '</span><span class="status-badge status-badge--' + (o.status === 'picked' ? 'green' : 'red') + '">' + o.status + '</span></div><div class="order-card-items">' + (o.items || []).map(i => i.name + ' x' + i.qty).join(', ') + '</div><div class="order-card-total">₹' + (o.total || 0) + '</div></div>').join('');
+        if (history.length === 0) {
+            historyList.innerHTML = '<div class="empty-state"><p>No order history</p></div>';
+        } else {
+            historyList.innerHTML = history.map(o =>
+                '<div class="order-card">' +
+                '<div class="order-card-header"><span class="order-id">#' + (o.billNumber || o.id.slice(0, 8)) + '</span>' +
+                '<span class="status-badge status-badge--' + (o.status === 'picked' ? 'green' : 'red') + '">' + o.status + '</span></div>' +
+                '<div class="order-card-items">' + (o.items || []).map(i => i.name + ' x' + i.qty).join(', ') + '</div>' +
+                '<div class="order-card-total">₹' + (o.total || 0) + '</div></div>'
+            ).join('');
         }
     }
 }
+
+// ============================================
+// STUDENT BILLS (FIX: was referenced but never defined)
+// ============================================
+
+function initStudentBills() {
+    const billsList = document.querySelector('.bills-list');
+    if (!billsList) return;
+    const completedOrders = allOrders.filter(o => o.userId === currentUser?.uid && o.status === 'picked');
+    if (completedOrders.length === 0) {
+        billsList.innerHTML = '<div class="empty-state"><p>No bills yet</p></div>';
+        return;
+    }
+    billsList.innerHTML = completedOrders.map(o =>
+        '<div class="bill-card">' +
+        '<div class="bill-card-header"><span class="bill-id">' + (o.billNumber || '#' + o.id.slice(0, 8)) + '</span>' +
+        '<span class="bill-date">' + new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt).toLocaleDateString() + '</span></div>' +
+        '<div class="bill-card-items">' + (o.items || []).map(i => i.name + ' x' + i.qty + ' — ₹' + (i.price * i.qty)).join('<br>') + '</div>' +
+        '<div class="bill-card-total"><strong>Total: ₹' + (o.total || 0) + '</strong></div></div>'
+    ).join('');
+}
+
+// ============================================
+// CANTEEN BILLS (FIX: was referenced but never defined)
+// ============================================
+
+function initCanteenBills() {
+    const billsList = document.querySelector('.canteen-bills-list');
+    if (!billsList) return;
+    const completedOrders = allOrders.filter(o => o.status === 'picked');
+    if (completedOrders.length === 0) {
+        billsList.innerHTML = '<div class="empty-state"><p>No completed orders yet</p></div>';
+        return;
+    }
+    billsList.innerHTML = completedOrders.map(o =>
+        '<div class="bill-card">' +
+        '<div class="bill-card-header"><span class="bill-id">' + (o.billNumber || '#' + o.id.slice(0, 8)) + '</span>' +
+        '<span class="bill-student">' + (o.studentName || 'Unknown') + '</span>' +
+        '<span class="bill-date">' + new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt).toLocaleDateString() + '</span></div>' +
+        '<div class="bill-card-items">' + (o.items || []).map(i => i.name + ' x' + i.qty).join(', ') + '</div>' +
+        '<div class="bill-card-total"><strong>Total: ₹' + (o.total || 0) + '</strong></div></div>'
+    ).join('');
+}
+
+// ============================================
+// CANTEEN ANALYTICS (FIX: was referenced but never defined)
+// ============================================
+
+function initCanteenAnalytics() {
+    const revenueChart = document.getElementById('analyticsRevenueChart');
+    const topItems = document.getElementById('analyticsTopItems');
+    const freqGrid = document.getElementById('analyticsFrequencyGrid');
+    const lowDemand = document.getElementById('analyticsLowDemand');
+    if (!revenueChart && !topItems) return;
+    renderAnalytics(revenueChart, topItems, freqGrid, lowDemand);
+}
+
+function renderAnalytics(revenueChart, topItemsEl, freqGrid, lowDemandEl) {
+    // Revenue by day (last 7 days)
+    if (revenueChart) {
+        const days = [];
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date(); d.setDate(d.getDate() - i); d.setHours(0, 0, 0, 0);
+            const next = new Date(d); next.setDate(next.getDate() + 1);
+            const rev = allOrders
+                .filter(o => o.status === 'picked')
+                .filter(o => { const t = new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt); return t >= d && t < next; })
+                .reduce((s, o) => s + (o.total || 0), 0);
+            days.push({ label: d.toLocaleDateString('en-IN', { weekday: 'short' }), rev });
+        }
+        const max = Math.max(...days.map(d => d.rev), 1);
+        revenueChart.innerHTML = '<div class="analytics-bar-chart">' +
+            days.map(d =>
+                '<div class="analytics-bar-col">' +
+                '<div class="analytics-bar" style="height:' + Math.round((d.rev / max) * 120) + 'px" title="₹' + d.rev + '"></div>' +
+                '<span class="analytics-bar-label">' + d.label + '</span>' +
+                '<span class="analytics-bar-val">₹' + d.rev + '</span></div>'
+            ).join('') + '</div>';
+    }
+
+    // Top items by order count
+    if (topItemsEl) {
+        const itemCounts = {};
+        allOrders.forEach(o => (o.items || []).forEach(i => { itemCounts[i.name] = (itemCounts[i.name] || 0) + i.qty; }));
+        const sorted = Object.entries(itemCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        topItemsEl.innerHTML = sorted.length === 0
+            ? '<p>No data yet</p>'
+            : sorted.map(([name, count], idx) => '<div class="analytics-top-item"><span class="analytics-top-rank">' + (idx + 1) + '</span><span class="analytics-top-name">' + name + '</span><span class="analytics-top-count">' + count + ' sold</span></div>').join('');
+    }
+
+    // Frequency grid (orders per hour)
+    if (freqGrid) {
+        const hours = Array(24).fill(0);
+        allOrders.forEach(o => { const h = new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt).getHours(); hours[h]++; });
+        const max = Math.max(...hours, 1);
+        freqGrid.innerHTML = hours.map((count, h) =>
+            '<div class="analytics-freq-cell" style="opacity:' + (0.1 + 0.9 * count / max).toFixed(2) + '" title="' + h + ':00 — ' + count + ' orders">' + h + '</div>'
+        ).join('');
+    }
+
+    // Low demand items
+    if (lowDemandEl) {
+        const itemCounts = {};
+        allOrders.forEach(o => (o.items || []).forEach(i => { itemCounts[i.name] = (itemCounts[i.name] || 0) + i.qty; }));
+        const low = menuItems.filter(m => (itemCounts[m.name] || 0) < 5);
+        lowDemandEl.innerHTML = low.length === 0
+            ? '<p>All items are performing well</p>'
+            : low.map(m => '<div class="analytics-low-item"><span>' + m.name + '</span><span>' + (itemCounts[m.name] || 0) + ' sold</span></div>').join('');
+    }
+}
+
+// ============================================
+// CART PAGE
+// ============================================
 
 function initCartPage() {
     const cartItems = document.querySelector('.cart-items');
@@ -794,7 +1141,13 @@ function initCartPage() {
         if (cartSummary) cartSummary.style.display = 'none';
         return;
     }
-    cartItems.innerHTML = Cart.items.map(item => '<div class="cart-item" data-id="' + item.id + '"><div class="cart-item-image"><img src="' + item.image + '" alt="' + item.name + '"></div><div class="cart-item-details"><h4 class="cart-item-name">' + item.name + '</h4><span class="cart-item-price">₹' + item.price + '</span></div><div class="cart-item-qty"><button class="qty-btn qty-minus" data-id="' + item.id + '">−</button><span class="qty-value">' + item.qty + '</span><button class="qty-btn qty-plus" data-id="' + item.id + '">+</button></div><button class="cart-item-remove" data-id="' + item.id + '">&times;</button></div>').join('');
+    cartItems.innerHTML = Cart.items.map(item =>
+        '<div class="cart-item" data-id="' + item.id + '">' +
+        '<div class="cart-item-image"><img src="' + item.image + '" alt="' + item.name + '"></div>' +
+        '<div class="cart-item-details"><h4 class="cart-item-name">' + item.name + '</h4><span class="cart-item-price">₹' + item.price + '</span></div>' +
+        '<div class="cart-item-qty"><button class="qty-btn qty-minus" data-id="' + item.id + '">−</button><span class="qty-value">' + item.qty + '</span><button class="qty-btn qty-plus" data-id="' + item.id + '">+</button></div>' +
+        '<button class="cart-item-remove" data-id="' + item.id + '">&times;</button></div>'
+    ).join('');
     cartItems.querySelectorAll('.qty-plus').forEach(btn => btn.addEventListener('click', function() { Cart.updateQty(this.dataset.id, (Cart.items.find(i => i.id === this.dataset.id)?.qty || 0) + 1); initCartPage(); }));
     cartItems.querySelectorAll('.qty-minus').forEach(btn => btn.addEventListener('click', function() { Cart.updateQty(this.dataset.id, (Cart.items.find(i => i.id === this.dataset.id)?.qty || 0) - 1); initCartPage(); }));
     cartItems.querySelectorAll('.cart-item-remove').forEach(btn => btn.addEventListener('click', function() { Cart.remove(this.dataset.id); initCartPage(); }));
@@ -830,15 +1183,29 @@ function initCartPage() {
     });
 }
 
+// ============================================
+// DASHBOARD PAGE
+// ============================================
+
 function initDashboardPage() {
     updateDashboardStats();
     const upcoming = allOrders.filter(o => o.studentId === currentUser?.uid && !['picked', 'cancelled'].includes(o.status));
     const recentContainer = document.querySelector('.recent-orders-list');
     if (recentContainer) {
-        if (upcoming.length === 0) { recentContainer.innerHTML = '<div class="empty-state"><p>No recent orders</p></div>'; }
-        else { recentContainer.innerHTML = upcoming.slice(0, 5).map(o => '<div class="order-card-mini"><span class="order-id">#' + (o.billNumber || o.id.slice(0,8)) + '</span><span class="status-badge status-badge--' + (o.status === 'pending' ? 'yellow' : 'blue') + '">' + o.status + '</span></div>').join(''); }
+        if (upcoming.length === 0) {
+            recentContainer.innerHTML = '<div class="empty-state"><p>No recent orders</p></div>';
+        } else {
+            recentContainer.innerHTML = upcoming.slice(0, 5).map(o =>
+                '<div class="order-card-mini"><span class="order-id">#' + (o.billNumber || o.id.slice(0, 8)) + '</span>' +
+                '<span class="status-badge status-badge--' + (o.status === 'pending' ? 'yellow' : 'blue') + '">' + o.status + '</span></div>'
+            ).join('');
+        }
     }
 }
+
+// ============================================
+// UTILITIES
+// ============================================
 
 function animateCounter(el) {
     const target = parseInt(el.textContent.replace(/[^\d]/g, '')) || 0;
@@ -847,10 +1214,3 @@ function animateCounter(el) {
     const step = Math.ceil(target / 30);
     const timer = setInterval(() => { current += step; if (current >= target) { current = target; clearInterval(timer); } el.textContent = el.textContent.includes('₹') ? '₹' + current : current; }, 30);
 }
-
-function renderCanteenMenuList(l) { renderList(); }
-function renderStudentOrders(a) { initStudentOrders(); }
-function renderStudentBills(b) { }
-function renderCanteenBills(b) { }
-function renderAnalytics(c, t, grid, low) { }
-function renderCanteenDashboardStats() { updateDashboardStats(); }
