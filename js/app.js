@@ -1176,7 +1176,7 @@ function initCartPage() {
     if (!cartItems) return;
     Cart.load();
     if (Cart.items.length === 0) {
-        cartItems.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg></div><h3 class="empty-title">Cart is empty</h3><a href="menu.html" class="btn btn-primary">Browse Menu</a></div>';
+        cartItems.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg></div><h3 class="empty-title">Your cart is empty</h3><p class="empty-text">Browse the menu to add some delicious items</p><a href="menu.html" class="btn btn-primary" style="margin-top: 16px;">Browse Menu</a></div>';
         if (cartSummary) cartSummary.style.display = 'none';
         return;
     }
