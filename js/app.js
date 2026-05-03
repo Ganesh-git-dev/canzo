@@ -89,47 +89,6 @@ onAuthStateChanged(auth, async (user) => {
     } else { currentUser = null; }
 });
 
-function showProfileCompleteModal(firebaseUser) {
-    if (document.getElementById('profileModal')) return;
-    const modal = document.createElement('div');
-    modal.id = 'profileModal';
-    modal.className = 'modal active';
-    modal.innerHTML = `
-        <div class="modal-overlay"></div>
-        <div class="modal-content" style="max-width:480px;">
-            <div class="modal-header"><h3 class="modal-title">Complete Your Profile</h3></div>
-            <div class="modal-body">
-                <p style="color:var(--color-text-light);margin-bottom:20px;">Just a few more details to get started.</p>
-                <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="profileName" class="form-input" value="${firebaseUser.displayName || ''}" placeholder="Your name"></div>
-                <div class="form-group"><label class="form-label">Register Number</label><input type="text" id="profileReg" class="form-input" placeholder="E720524AM006"></div>
-                <div class="form-row">
-                    <div class="form-group"><label class="form-label">Department</label><select id="profileDept" class="form-select"><option value="">Choose...</option><option value="cse">CSE</option><option value="ece">ECE</option><option value="eee">EEE</option><option value="mech">Mech</option><option value="civil">Civil</option><option value="it">IT</option></select></div>
-                    <div class="form-group"><label class="form-label">Year</label><select id="profileYear" class="form-select"><option value="">Year</option><option value="1st Year">1st</option><option value="2nd Year">2nd</option><option value="3rd Year">3rd</option><option value="4th Year">4th</option></select></div>
-                </div>
-                <div class="form-group"><label class="form-label">Phone</label><input type="tel" id="profilePhone" class="form-input" placeholder="+91 701073672X"></div>
-                <button class="btn btn-primary btn-full" id="profileSaveBtn">Save & Continue</button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-    modal.querySelector('.modal-overlay')?.addEventListener('click', () => modal.remove());
-    modal.querySelector('#profileSaveBtn').addEventListener('click', async () => {
-        const name = modal.querySelector('#profileName').value || 'Student';
-        const registerNumber = modal.querySelector('#profileReg').value || '';
-        const department = modal.querySelector('#profileDept').value || '';
-        const year = modal.querySelector('#profileYear').value || '';
-        const phone = modal.querySelector('#profilePhone').value || '';
-        await setDoc(doc(db, 'users', firebaseUser.uid), {
-            email: firebaseUser.email, name, role: 'student', registerNumber, department, year, phone,
-            balance: 0, totalOrders: 0, totalSpent: 0, favoriteItems: [], dietaryPreferences: [],
-            createdAt: serverTimestamp(), updatedAt: serverTimestamp(),
-        }, { merge: true });
-        currentUser = { uid: firebaseUser.uid, email: firebaseUser.email, role: 'student', name, registerNumber, department, year, phone };
-        modal.remove();
-        applyRoleUI();
-    });
-}
-
 function applyRoleUI() {
     if (!currentUser) return;
     const currentPage = window.location.pathname.split('/').pop();
@@ -224,9 +183,9 @@ export async function handleGoogleLogin() {
     } catch (error) {
         if (error.code === 'auth/popup-closed-by-user') return;
         if (error.code === 'auth/unauthorized-domain') {
-            alert('This domain is not authorized for Google Sign-In. Current domain: ' + window.location.hostname + '\n\nPlease add it in Firebase Console → Authentication → Settings → Authorized domains.\n\nFor local testing, also add: localhost');
+            alert('This domain is not authorized for Google Sign-In. Current domain: ' + window.location.hostname + '\n\nPlease add it in Firebase Console â†’ Authentication â†’ Settings â†’ Authorized domains.\n\nFor local testing, also add: localhost');
         } else if (error.code === 'auth/operation-not-allowed') {
-            alert('Google Sign-In is not enabled. Please enable it in Firebase Console → Authentication → Sign-in method.');
+            alert('Google Sign-In is not enabled. Please enable it in Firebase Console â†’ Authentication â†’ Sign-in method.');
         } else {
             alert('Google login failed (' + error.code + '): ' + error.message);
         }
@@ -382,7 +341,7 @@ function updateDashboardStats() {
     const tE = document.querySelector('.stat-card[data-stat="total"] .stat-card-value');
     const mE = document.querySelector('.stat-card[data-stat="month"] .stat-card-value');
     const sE = document.querySelector('.stat-card[data-stat="spent"] .stat-card-value');
-    if (tE) tE.textContent = totalOrders; if (mE) mE.textContent = thisMonth; if (sE) sE.textContent = `₹${totalSpent}`;
+    if (tE) tE.textContent = totalOrders; if (mE) mE.textContent = thisMonth; if (sE) sE.textContent = `â‚¹${totalSpent}`;
     const sG = document.querySelector('.stats-grid');
     if (sG) { const ob = new IntersectionObserver(en => { en.forEach(e => { if (e.isIntersecting) { document.querySelectorAll('.stat-card-value').forEach(el => animateCounter(el)); ob.disconnect(); } }); }, { threshold: 0.5 }); ob.observe(sG); }
 }
@@ -390,8 +349,8 @@ function updateDashboardStats() {
 function renderMenuItems(container) {
     const inStock = menuItems.filter(i => i.inStock);
     if (inStock.length === 0) { container.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div><h3 class="empty-title">No items available</h3><p class="empty-text">Check back later for new dishes</p></div>'; return; }
-    container.innerHTML = inStock.map(item => `<div class="menu-item" data-id="${item.id}" data-category="${item.category}" data-name="${item.name.toLowerCase()}" data-desc="${item.description.toLowerCase()}"><div class="menu-item-image"><img src="${item.image}" alt="${item.name}" loading="lazy"></div><div class="menu-item-details"><div class="menu-item-header"><h4 class="menu-item-name">${item.name}</h4><span class="menu-item-price">₹${item.price}</span></div><p class="menu-item-desc">${item.description}</p><button class="menu-item-add" data-id="${item.id}">Add to Cart</button></div></div>`).join('');
-    container.querySelectorAll('.menu-item-add').forEach(btn => { btn.addEventListener('click', function() { const id = this.closest('.menu-item').dataset.id; const item = menuItems.find(i => i.id === id); if (item) { Cart.add({ id: item.id, name: item.name, price: item.price, image: item.image }); const t = this.textContent; this.textContent = 'Added ✓'; this.style.background = '#10b981'; setTimeout(() => { this.textContent = t; this.style.background = ''; }, 1500); } }); });
+    container.innerHTML = inStock.map(item => `<div class="menu-item" data-id="${item.id}" data-category="${item.category}" data-name="${item.name.toLowerCase()}" data-desc="${item.description.toLowerCase()}"><div class="menu-item-image"><img src="${item.image}" alt="${item.name}" loading="lazy"></div><div class="menu-item-details"><div class="menu-item-header"><h4 class="menu-item-name">${item.name}</h4><span class="menu-item-price">â‚¹${item.price}</span></div><p class="menu-item-desc">${item.description}</p><button class="menu-item-add" data-id="${item.id}">Add to Cart</button></div></div>`).join('');
+    container.querySelectorAll('.menu-item-add').forEach(btn => { btn.addEventListener('click', function() { const id = this.closest('.menu-item').dataset.id; const item = menuItems.find(i => i.id === id); if (item) { Cart.add({ id: item.id, name: item.name, price: item.price, image: item.image }); const t = this.textContent; this.textContent = 'Added âœ“'; this.style.background = '#10b981'; setTimeout(() => { this.textContent = t; this.style.background = ''; }, 1500); } }); });
 }
 
 function initMenuPage() {
@@ -415,13 +374,13 @@ function initCartPage() {
         cc.innerHTML = ''; const items = Cart.items;
         if (items.length === 0) { cc.innerHTML = `<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg></div><h3 class="empty-title">Your cart is empty</h3><p class="empty-text">Browse the menu to add some delicious items</p><a href="menu.html" class="btn btn-primary" style="margin-top:16px;">Browse Menu</a></div>`; if (se) se.style.display = 'none'; return; }
         if (se) se.style.display = '';
-        items.forEach(item => { const d = document.createElement('div'); d.className = 'cart-item'; d.dataset.id = item.id; d.innerHTML = `<div class="cart-item-image"><img src="${item.image}" alt="${item.name}" loading="lazy"></div><div class="cart-item-details"><h4 class="cart-item-name">${item.name}</h4><p class="cart-item-price">₹${item.price} each</p><div class="cart-item-actions"><button class="cart-qty-btn" data-action="dec">−</button><span class="cart-qty">${item.qty}</span><button class="cart-qty-btn" data-action="inc">+</button><span class="cart-item-remove"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></span></div></div>`; cc.appendChild(d); });
+        items.forEach(item => { const d = document.createElement('div'); d.className = 'cart-item'; d.dataset.id = item.id; d.innerHTML = `<div class="cart-item-image"><img src="${item.image}" alt="${item.name}" loading="lazy"></div><div class="cart-item-details"><h4 class="cart-item-name">${item.name}</h4><p class="cart-item-price">â‚¹${item.price} each</p><div class="cart-item-actions"><button class="cart-qty-btn" data-action="dec">âˆ’</button><span class="cart-qty">${item.qty}</span><button class="cart-qty-btn" data-action="inc">+</button><span class="cart-item-remove"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></span></div></div>`; cc.appendChild(d); });
         updateSummary(); bindCartEvents();
     }
     function updateSummary() {
         const sub = Cart.total(); const tax = Math.round(sub * 0.05); const tot = sub + tax;
         const su = document.querySelector('.app-header-subtitle'); if (su) su.textContent = `${Cart.count()} item${Cart.count() !== 1 ? 's' : ''} from Food Court`;
-        const rows = document.querySelectorAll('.cart-summary-row'); if (rows.length >= 4) { rows[0].querySelector('span:last-child').textContent = `₹${sub}`; rows[2].querySelector('span:last-child').textContent = `₹${tax}`; rows[3].querySelector('span:last-child').textContent = `₹${tot}`; }
+        const rows = document.querySelectorAll('.cart-summary-row'); if (rows.length >= 4) { rows[0].querySelector('span:last-child').textContent = `â‚¹${sub}`; rows[2].querySelector('span:last-child').textContent = `â‚¹${tax}`; rows[3].querySelector('span:last-child').textContent = `â‚¹${tot}`; }
     }
     function bindCartEvents() {
         cc.querySelectorAll('.cart-qty-btn').forEach(btn => { btn.addEventListener('click', function() { const id = this.closest('.cart-item').dataset.id; const qe = this.closest('.cart-item').querySelector('.cart-qty'); let q = parseInt(qe.textContent); if (this.dataset.action === 'inc') q++; else if (this.dataset.action === 'dec' && q > 1) q--; Cart.updateQty(id, q); qe.textContent = Cart.items.find(i => i.id === id)?.qty || 0; updateSummary(); }); });
@@ -439,17 +398,17 @@ function initCartPage() {
 }
 
 function initDashboardPage() { const n = document.querySelector('.app-user-name'); const r = document.querySelector('.app-user-role'); if (n) n.textContent = currentUser?.name || 'Student'; if (r) r.textContent = currentUser?.email || 'EASA College'; }
-function animateCounter(el) { const t = el.textContent; const p = t.startsWith('₹'); const c = t.includes(','); const d = t.includes('.'); const cl = t.replace(/[₹,]/g, ''); const tg = parseFloat(cl); if (isNaN(tg)) return; const dur = 1500; const st = performance.now(); function step(now) { const pr = Math.min((now - st) / dur, 1); const e = 1 - Math.pow(1 - pr, 3); let cur = e * tg; let disp = d ? cur.toFixed(1) : Math.round(cur).toString(); if (c) disp = Number(disp).toLocaleString('en-IN'); if (p) disp = '₹' + disp; el.textContent = disp; if (pr < 1) requestAnimationFrame(step); } requestAnimationFrame(step); }
+function animateCounter(el) { const t = el.textContent; const p = t.startsWith('â‚¹'); const c = t.includes(','); const d = t.includes('.'); const cl = t.replace(/[â‚¹,]/g, ''); const tg = parseFloat(cl); if (isNaN(tg)) return; const dur = 1500; const st = performance.now(); function step(now) { const pr = Math.min((now - st) / dur, 1); const e = 1 - Math.pow(1 - pr, 3); let cur = e * tg; let disp = d ? cur.toFixed(1) : Math.round(cur).toString(); if (c) disp = Number(disp).toLocaleString('en-IN'); if (p) disp = 'â‚¹' + disp; el.textContent = disp; if (pr < 1) requestAnimationFrame(step); } requestAnimationFrame(step); }
 
 function renderCanteenDashboardStats() {
     const today = allOrders.filter(o => { const d = new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt); return d.toDateString() === new Date().toDateString(); });
     const rev = today.filter(o => o.status === 'delivered').reduce((s, o) => s + o.total, 0);
     const active = allOrders.filter(o => ACTIVE_STATUSES.includes(o.status)).length;
     const tE = document.getElementById('statTodayOrders'); const rE = document.getElementById('statTodayRevenue'); const aE = document.getElementById('statItemsSold'); const oE = document.getElementById('statAvgPrep');
-    if (tE) tE.textContent = today.length; if (rE) rE.textContent = `₹${rev.toLocaleString('en-IN')}`; if (aE) aE.textContent = active; if (oE) oE.textContent = allOrders.length;
+    if (tE) tE.textContent = today.length; if (rE) rE.textContent = `â‚¹${rev.toLocaleString('en-IN')}`; if (aE) aE.textContent = active; if (oE) oE.textContent = allOrders.length;
 }
 
-function initCanteenDashboard() { const q = document.getElementById('liveOrderQueue'); if (!q) return; renderLiveQueue(q); renderCanteenDashboardStats(); const n = document.querySelector('.app-header-subtitle'); if (n) n.textContent = `${canteenSettings.name} · ${canteenSettings.location}`; }
+function initCanteenDashboard() { const q = document.getElementById('liveOrderQueue'); if (!q) return; renderLiveQueue(q); renderCanteenDashboardStats(); const n = document.querySelector('.app-header-subtitle'); if (n) n.textContent = `${canteenSettings.name} Â· ${canteenSettings.location}`; }
 
 function renderLiveQueue(queue) {
     const orders = allOrders.filter(o => ACTIVE_STATUSES.includes(o.status));
@@ -468,11 +427,11 @@ function renderLiveQueue(queue) {
                 <span class="canteen-order-time">${timeStr}</span>
                 <span class="canteen-order-status canteen-order-status--${order.status}">${STATUS_LABELS[order.status]}</span>
             </div>
-            <div class="canteen-order-student">${order.studentName}${order.slot ? ' · ' + order.slot : ''}</div>
-            <div class="canteen-order-items">${order.items.map(i => `${i.name} ×${i.qty}`).join(', ')}</div>
+            <div class="canteen-order-student">${order.studentName}${order.slot ? ' Â· ' + order.slot : ''}</div>
+            <div class="canteen-order-items">${order.items.map(i => `${i.name} Ã—${i.qty}`).join(', ')}</div>
             <div class="canteen-order-footer">
-                <span class="canteen-order-total">₹${order.total}</span>
-                ${nextStatus ? `<button class="btn-status-advance" data-action="advance">→ ${STATUS_LABELS[nextStatus]}</button>` : '<span class="canteen-order-status canteen-order-status--delivered">Delivered</span>'}
+                <span class="canteen-order-total">â‚¹${order.total}</span>
+                ${nextStatus ? `<button class="btn-status-advance" data-action="advance">â†’ ${STATUS_LABELS[nextStatus]}</button>` : '<span class="canteen-order-status canteen-order-status--delivered">Delivered</span>'}
             </div>`;
         queue.appendChild(div);
     });
@@ -496,7 +455,7 @@ function renderCanteenMenuList(list) {
         tc.innerHTML = categories.map((c, i) => `<button class="menu-category-btn${i === 0 ? ' active' : ''}" data-category="${c}">${c === 'all' ? 'All Items' : c.charAt(0).toUpperCase() + c.slice(1)}</button>`).join('');
         tc.querySelectorAll('.menu-category-btn').forEach(btn => { btn.addEventListener('click', function() { tc.querySelectorAll('.menu-category-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); const c = this.dataset.category; list.querySelectorAll('.menu-management-item').forEach(item => { item.style.display = c === 'all' || item.dataset.category === c ? '' : 'none'; }); }); });
     }
-    list.innerHTML = menuItems.map(item => `<div class="menu-management-item" data-id="${item.id}" data-category="${item.category}"><div class="menu-management-item-image"><img src="${item.image}" alt="${item.name}"></div><div class="menu-management-item-details"><div class="menu-management-item-header"><h4 class="menu-management-item-name">${item.name}</h4><span class="menu-management-item-category">${item.category.charAt(0).toUpperCase() + item.category.slice(1)}</span></div><p class="menu-management-item-desc">${item.description}</p><div class="menu-management-item-meta"><span class="menu-management-item-price">₹${item.price}</span><label class="menu-management-item-toggle"><input type="checkbox" ${item.inStock ? 'checked' : ''} data-id="${item.id}"><span class="menu-management-item-toggle-slider"></span><span class="menu-management-item-toggle-label">${item.inStock ? 'In Stock' : 'Out of Stock'}</span></label></div></div><div class="menu-management-item-actions"><button class="menu-management-item-edit" data-id="${item.id}"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="menu-management-item-delete" data-id="${item.id}"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></div></div>`).join('');
+    list.innerHTML = menuItems.map(item => `<div class="menu-management-item" data-id="${item.id}" data-category="${item.category}"><div class="menu-management-item-image"><img src="${item.image}" alt="${item.name}"></div><div class="menu-management-item-details"><div class="menu-management-item-header"><h4 class="menu-management-item-name">${item.name}</h4><span class="menu-management-item-category">${item.category.charAt(0).toUpperCase() + item.category.slice(1)}</span></div><p class="menu-management-item-desc">${item.description}</p><div class="menu-management-item-meta"><span class="menu-management-item-price">â‚¹${item.price}</span><label class="menu-management-item-toggle"><input type="checkbox" ${item.inStock ? 'checked' : ''} data-id="${item.id}"><span class="menu-management-item-toggle-slider"></span><span class="menu-management-item-toggle-label">${item.inStock ? 'In Stock' : 'Out of Stock'}</span></label></div></div><div class="menu-management-item-actions"><button class="menu-management-item-edit" data-id="${item.id}"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="menu-management-item-delete" data-id="${item.id}"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></div></div>`).join('');
     list.querySelectorAll('.menu-management-item-toggle input').forEach(t => { t.addEventListener('change', async function() { await updateDoc(doc(db, 'menuItems', this.dataset.id), { inStock: this.checked }); }); });
     list.querySelectorAll('.menu-management-item-edit').forEach(btn => { btn.addEventListener('click', function() { const item = menuItems.find(i => i.id === this.dataset.id); if (item) openMenuModal(item); }); });
     list.querySelectorAll('.menu-management-item-delete').forEach(btn => { btn.addEventListener('click', async function() { const id = this.dataset.id; const el = document.querySelector(`.menu-management-item[data-id="${id}"]`); if (el) { el.style.opacity = '0'; el.style.transform = 'translateX(-20px)'; el.style.transition = 'all 0.3s ease'; setTimeout(async () => { await deleteDoc(doc(db, 'menuItems', id)); }, 300); } }); });
@@ -526,10 +485,10 @@ function renderOrdersTable(tableBody) {
             <div class="canteen-orders-table-col">#${order.id.slice(-4)}</div>
             <div class="canteen-orders-table-col"><strong>${order.studentName}</strong></div>
             <div class="canteen-orders-table-col">${order.items.map(i => `${i.qty}x ${i.name}`).join(', ')}</div>
-            <div class="canteen-orders-table-col">${order.slot || '—'}</div>
-            <div class="canteen-orders-table-col">₹${order.total}</div>
+            <div class="canteen-orders-table-col">${order.slot || 'â€”'}</div>
+            <div class="canteen-orders-table-col">â‚¹${order.total}</div>
             <div class="canteen-orders-table-col">
-                ${!isDone && idx < STATUS_FLOW.length - 1 ? `<button class="btn-order-advance" data-id="${order.id}">→ ${STATUS_LABELS[STATUS_FLOW[idx + 1]]}</button>` : `<span class="canteen-order-status canteen-order-status--${order.status}">${STATUS_LABELS[order.status] || order.status}</span>`}
+                ${!isDone && idx < STATUS_FLOW.length - 1 ? `<button class="btn-order-advance" data-id="${order.id}">â†’ ${STATUS_LABELS[STATUS_FLOW[idx + 1]]}</button>` : `<span class="canteen-order-status canteen-order-status--${order.status}">${STATUS_LABELS[order.status] || order.status}</span>`}
             </div>`;
         tableBody.appendChild(row);
     });
@@ -599,12 +558,12 @@ function renderAnalytics(chartBars, topItemsList, frequencyGrid, lowDemandList) 
     const totalOrd = allOrders.length;
     const avgOrd = totalOrd > 0 ? Math.round(totalRevenue / totalOrd) : 0;
     const rE = document.getElementById('analyticsTotalRevenue'); const oE = document.getElementById('analyticsTotalOrders'); const aE = document.getElementById('analyticsAvgOrder');
-    if (rE) rE.textContent = `₹${totalRevenue.toLocaleString('en-IN')}`; if (oE) oE.textContent = totalOrd; if (aE) aE.textContent = `₹${avgOrd}`;
+    if (rE) rE.textContent = `â‚¹${totalRevenue.toLocaleString('en-IN')}`; if (oE) oE.textContent = totalOrd; if (aE) aE.textContent = `â‚¹${avgOrd}`;
     const days = []; const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const ds = d.toDateString(); const do2 = allOrders.filter(o => { const od = new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt); return od.toDateString() === ds && o.status === 'delivered'; }); days.push({ name: dayNames[d.getDay()], revenue: do2.reduce((s, o) => s + o.total, 0), orders: do2.length }); }
-    if (chartBars) { const mx = Math.max(...days.map(d => d.revenue), 1); chartBars.innerHTML = days.map(d => { const h = Math.max((d.revenue / mx) * 100, 4); return `<div class="analytics-bar-group"><div class="analytics-bar" style="height:${h}%;"><span class="analytics-bar-value">₹${d.revenue >= 1000 ? (d.revenue / 1000).toFixed(1) + 'k' : d.revenue}</span></div><span class="analytics-bar-label">${d.name}</span></div>`; }).join(''); }
-    if (topItemsList) { const ic = {}; allOrders.forEach(o => { o.items.forEach(it => { if (!ic[it.name]) ic[it.name] = { name: it.name, qty: 0, rev: 0 }; ic[it.name].qty += it.qty; ic[it.name].rev += it.qty * it.price; }); }); const ti = Object.values(ic).sort((a, b) => b.qty - a.qty).slice(0, 6); topItemsList.innerHTML = ti.length === 0 ? '<div class="analytics-empty-state">No data yet</div>' : ti.map((it, i) => { const p = (it.qty / ti[0].qty) * 100; return `<div class="analytics-top-item"><span class="analytics-top-item-rank">${i + 1}</span><div class="analytics-top-item-info"><div class="analytics-top-item-name">${it.name}</div><div class="analytics-top-item-meta">${it.qty} orders · ₹${it.rev.toLocaleString('en-IN')}</div></div><div class="analytics-top-item-bar"><div class="analytics-top-item-bar-fill" style="width:${p}%;"></div></div></div>`; }).join(''); }
-    if (frequencyGrid) { const sc = {}; allOrders.forEach(o => { if (!sc[o.studentName]) sc[o.studentName] = { name: o.studentName, orders: 0, spent: 0 }; sc[o.studentName].orders++; sc[o.studentName].spent += o.total; }); const students = Object.values(sc).sort((a, b) => b.orders - a.orders); const us = students.length; const ao = us > 0 ? (totalOrd / us).toFixed(1) : 0; const pu = students.filter(s => s.orders >= 5).length; const fv = frequencyGrid.querySelector('.analytics-frequency-value'); if (fv) { frequencyGrid.innerHTML = `<div class="analytics-frequency-card"><div class="analytics-frequency-value">${us}</div><div class="analytics-frequency-label">Unique Students</div></div><div class="analytics-frequency-card"><div class="analytics-frequency-value">${ao}</div><div class="analytics-frequency-label">Avg Orders/Student</div></div><div class="analytics-frequency-card"><div class="analytics-frequency-value">${pu}</div><div class="analytics-frequency-label">Power Users (5+ orders)</div></div>`; } else { frequencyGrid.innerHTML = students.length === 0 ? '<div class="analytics-empty-state">No data yet</div>' : students.map(s => { const ini = s.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2); return `<div class="analytics-frequency-item"><div class="analytics-frequency-avatar">${ini}</div><div class="analytics-frequency-info"><strong>${s.name}</strong><span>${s.orders} orders · ₹${s.spent}</span></div></div>`; }).join(''); } }
+    if (chartBars) { const mx = Math.max(...days.map(d => d.revenue), 1); chartBars.innerHTML = days.map(d => { const h = Math.max((d.revenue / mx) * 100, 4); return `<div class="analytics-bar-group"><div class="analytics-bar" style="height:${h}%;"><span class="analytics-bar-value">â‚¹${d.revenue >= 1000 ? (d.revenue / 1000).toFixed(1) + 'k' : d.revenue}</span></div><span class="analytics-bar-label">${d.name}</span></div>`; }).join(''); }
+    if (topItemsList) { const ic = {}; allOrders.forEach(o => { o.items.forEach(it => { if (!ic[it.name]) ic[it.name] = { name: it.name, qty: 0, rev: 0 }; ic[it.name].qty += it.qty; ic[it.name].rev += it.qty * it.price; }); }); const ti = Object.values(ic).sort((a, b) => b.qty - a.qty).slice(0, 6); topItemsList.innerHTML = ti.length === 0 ? '<div class="analytics-empty-state">No data yet</div>' : ti.map((it, i) => { const p = (it.qty / ti[0].qty) * 100; return `<div class="analytics-top-item"><span class="analytics-top-item-rank">${i + 1}</span><div class="analytics-top-item-info"><div class="analytics-top-item-name">${it.name}</div><div class="analytics-top-item-meta">${it.qty} orders Â· â‚¹${it.rev.toLocaleString('en-IN')}</div></div><div class="analytics-top-item-bar"><div class="analytics-top-item-bar-fill" style="width:${p}%;"></div></div></div>`; }).join(''); }
+    if (frequencyGrid) { const sc = {}; allOrders.forEach(o => { if (!sc[o.studentName]) sc[o.studentName] = { name: o.studentName, orders: 0, spent: 0 }; sc[o.studentName].orders++; sc[o.studentName].spent += o.total; }); const students = Object.values(sc).sort((a, b) => b.orders - a.orders); const us = students.length; const ao = us > 0 ? (totalOrd / us).toFixed(1) : 0; const pu = students.filter(s => s.orders >= 5).length; const fv = frequencyGrid.querySelector('.analytics-frequency-value'); if (fv) { frequencyGrid.innerHTML = `<div class="analytics-frequency-card"><div class="analytics-frequency-value">${us}</div><div class="analytics-frequency-label">Unique Students</div></div><div class="analytics-frequency-card"><div class="analytics-frequency-value">${ao}</div><div class="analytics-frequency-label">Avg Orders/Student</div></div><div class="analytics-frequency-card"><div class="analytics-frequency-value">${pu}</div><div class="analytics-frequency-label">Power Users (5+ orders)</div></div>`; } else { frequencyGrid.innerHTML = students.length === 0 ? '<div class="analytics-empty-state">No data yet</div>' : students.map(s => { const ini = s.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2); return `<div class="analytics-frequency-item"><div class="analytics-frequency-avatar">${ini}</div><div class="analytics-frequency-info"><strong>${s.name}</strong><span>${s.orders} orders Â· â‚¹${s.spent}</span></div></div>`; }).join(''); } }
     if (lowDemandList) { const ioc = {}; allOrders.forEach(o => o.items.forEach(i => { ioc[i.name] = (ioc[i.name] || 0) + i.qty; })); const li = menuItems.filter(item => (ioc[item.name] || 0) === 0); lowDemandList.innerHTML = li.length === 0 ? '<div class="analytics-empty-state">No data yet</div>' : li.map(item => `<div class="analytics-waste-item"><div class="analytics-waste-item-info"><span class="analytics-waste-item-name">${item.name}</span><span class="analytics-waste-item-count">0 orders</span></div><span class="analytics-waste-item-badge analytics-waste-item-badge--very-low">No Orders</span></div>`).join(''); }
 }
 
@@ -621,13 +580,13 @@ function renderStudentOrders(activeList) {
         active.forEach(order => {
             const div = document.createElement('div'); div.className = 'order-card';
             const ts = new Date(order.createdAt?.seconds ? order.createdAt.seconds * 1000 : order.createdAt).toLocaleString();
-            div.innerHTML = `<div class="order-card-status ${order.status}">${icons[order.status] || ''}</div><div class="order-card-info"><h4>${order.canteen || 'Food Court'}</h4><p class="order-card-id">#${order.id.slice(-4)} · ${order.billNumber || ''}</p><p class="order-card-items">${order.items.map(i => `${i.name} ×${i.qty}`).join(', ')}</p><p class="order-card-time">${ts} · ${order.slot}</p></div><div class="order-card-total"><span class="order-card-badge ${order.status}">${STATUS_LABELS[order.status]}</span><span class="order-card-amount">₹${order.total}</span></div>`;
+            div.innerHTML = `<div class="order-card-status ${order.status}">${icons[order.status] || ''}</div><div class="order-card-info"><h4>${order.canteen || 'Food Court'}</h4><p class="order-card-id">#${order.id.slice(-4)} Â· ${order.billNumber || ''}</p><p class="order-card-items">${order.items.map(i => `${i.name} Ã—${i.qty}`).join(', ')}</p><p class="order-card-time">${ts} Â· ${order.slot}</p></div><div class="order-card-total"><span class="order-card-badge ${order.status}">${STATUS_LABELS[order.status]}</span><span class="order-card-amount">â‚¹${order.total}</span></div>`;
             activeList.appendChild(div);
         });
     }
     if (historyList) {
         if (history.length === 0) { historyList.innerHTML = '<div class="order-empty-state">No order history</div>'; }
-        else { history.forEach(order => { const div = document.createElement('div'); div.className = 'order-card'; const ts = new Date(order.createdAt?.seconds ? order.createdAt.seconds * 1000 : order.createdAt).toLocaleString(); div.innerHTML = `<div class="order-card-status delivered"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="order-card-info"><h4>${order.canteen || 'Food Court'}</h4><p class="order-card-id">#${order.id.slice(-4)} · ${order.billNumber || ''}</p><p class="order-card-items">${order.items.map(i => `${i.name} ×${i.qty}`).join(', ')}</p><p class="order-card-time">${ts}</p></div><div class="order-card-total"><span class="order-card-badge delivered">Delivered</span><span class="order-card-amount">₹${order.total}</span></div>`; historyList.appendChild(div); }); }
+        else { history.forEach(order => { const div = document.createElement('div'); div.className = 'order-card'; const ts = new Date(order.createdAt?.seconds ? order.createdAt.seconds * 1000 : order.createdAt).toLocaleString(); div.innerHTML = `<div class="order-card-status delivered"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="order-card-info"><h4>${order.canteen || 'Food Court'}</h4><p class="order-card-id">#${order.id.slice(-4)} Â· ${order.billNumber || ''}</p><p class="order-card-items">${order.items.map(i => `${i.name} Ã—${i.qty}`).join(', ')}</p><p class="order-card-time">${ts}</p></div><div class="order-card-total"><span class="order-card-badge delivered">Delivered</span><span class="order-card-amount">â‚¹${order.total}</span></div>`; historyList.appendChild(div); }); }
     }
     const su = document.querySelector('.app-header-subtitle'); if (su) su.textContent = `${active.length} active, ${history.length} delivered`;
 }
@@ -639,7 +598,7 @@ function renderStudentBills(list) {
     if (orders.length === 0) { list.innerHTML = '<div class="order-empty-state">No bills yet</div>'; return; }
     list.innerHTML = orders.map(order => {
         const ts = new Date(order.createdAt?.seconds ? order.createdAt.seconds * 1000 : order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-        return `<div class="bill-card"><div class="bill-header"><div><div class="bill-number">${order.billNumber || '#' + order.id.slice(-6)}</div><div class="bill-date">${ts}</div></div><div class="bill-total">₹${order.total}</div></div><div class="bill-items">${order.items.map(i => `<div class="bill-item-row"><span class="bill-item-name">${i.name} × ${i.qty}</span><span class="bill-item-price">₹${i.lineTotal}</span></div>`).join('')}</div><div class="bill-summary"><div class="bill-summary-row"><span>Subtotal</span><span>₹${order.subtotal || order.total - (order.tax || 0)}</span></div><div class="bill-summary-row"><span>Tax (5%)</span><span>₹${order.tax || 0}</span></div><div class="bill-summary-row total"><span>Total</span><span>₹${order.total}</span></div></div><div class="bill-footer"><span class="bill-slot">${order.slot || ''}</span><span class="bill-payment">${order.paymentMethod === 'cash' ? 'Cash' : order.paymentMethod || 'Cash'}</span></div></div>`;
+        return `<div class="bill-card"><div class="bill-header"><div><div class="bill-number">${order.billNumber || '#' + order.id.slice(-6)}</div><div class="bill-date">${ts}</div></div><div class="bill-total">â‚¹${order.total}</div></div><div class="bill-items">${order.items.map(i => `<div class="bill-item-row"><span class="bill-item-name">${i.name} Ã— ${i.qty}</span><span class="bill-item-price">â‚¹${i.lineTotal}</span></div>`).join('')}</div><div class="bill-summary"><div class="bill-summary-row"><span>Subtotal</span><span>â‚¹${order.subtotal || order.total - (order.tax || 0)}</span></div><div class="bill-summary-row"><span>Tax (5%)</span><span>â‚¹${order.tax || 0}</span></div><div class="bill-summary-row total"><span>Total</span><span>â‚¹${order.total}</span></div></div><div class="bill-footer"><span class="bill-slot">${order.slot || ''}</span><span class="bill-payment">${order.paymentMethod === 'cash' ? 'Cash' : order.paymentMethod || 'Cash'}</span></div></div>`;
     }).join('');
 }
 
@@ -649,11 +608,11 @@ function renderCanteenBills(list) {
     const orders = allOrders.filter(o => o.status === 'delivered');
     const totalRev = orders.reduce((s, o) => s + o.total, 0);
     const revEl = document.getElementById('canteenTotalRevenue');
-    if (revEl) revEl.textContent = `₹${totalRev.toLocaleString('en-IN')}`;
+    if (revEl) revEl.textContent = `â‚¹${totalRev.toLocaleString('en-IN')}`;
     if (orders.length === 0) { list.innerHTML = '<div class="canteen-empty-state">No bills yet</div>'; return; }
     list.innerHTML = orders.map(order => {
         const ts = new Date(order.createdAt?.seconds ? order.createdAt.seconds * 1000 : order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-        return `<div class="bill-card"><div class="bill-header"><div><div class="bill-number">${order.billNumber || '#' + order.id.slice(-6)}</div><div class="bill-student">${order.studentName}${order.registerNumber ? ' · ' + order.registerNumber : ''}</div></div><div class="bill-total">₹${order.total}</div></div><div class="bill-footer"><span class="bill-date">${ts}</span><span class="bill-slot">${order.slot || ''}</span><span class="bill-payment">${order.paymentMethod === 'cash' ? 'Cash' : order.paymentMethod || 'Cash'}</span></div></div>`;
+        return `<div class="bill-card"><div class="bill-header"><div><div class="bill-number">${order.billNumber || '#' + order.id.slice(-6)}</div><div class="bill-student">${order.studentName}${order.registerNumber ? ' Â· ' + order.registerNumber : ''}</div></div><div class="bill-total">â‚¹${order.total}</div></div><div class="bill-footer"><span class="bill-date">${ts}</span><span class="bill-slot">${order.slot || ''}</span><span class="bill-payment">${order.paymentMethod === 'cash' ? 'Cash' : order.paymentMethod || 'Cash'}</span></div></div>`;
     }).join('');
 }
 
@@ -662,15 +621,12 @@ function initCanteenBills() { const l = document.querySelector('.canteen-bills-l
 window.handleLogin = handleLogin;
 window.handleRegister = handleRegister;
 window.handleGoogleLogin = handleGoogleLogin;
-console.log('Canzo app.js loaded - handleGoogleLogin available:', typeof window.handleGoogleLogin);
 
 // Attach Google Sign-In button listeners (for when buttons are present)
-(function attachGoogleButtons() {
-    const loginBtn = document.getElementById('googleLoginBtn');
-    const registerBtn = document.getElementById('googleRegisterBtn');
-    if (loginBtn) { loginBtn.addEventListener('click', () => { console.log('Google login btn clicked'); handleGoogleLogin(); }); }
-    if (registerBtn) { registerBtn.addEventListener('click', () => { console.log('Google register btn clicked'); handleGoogleLogin(); }); }
-    if (!loginBtn && !registerBtn) {
-        setTimeout(attachGoogleButtons, 100);
-    }
-})();
+document.addEventListener('DOMContentLoaded', () => {
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    if (googleLoginBtn) googleLoginBtn.addEventListener('click', handleGoogleLogin);
+
+    const googleRegisterBtn = document.getElementById('googleRegisterBtn');
+    if (googleRegisterBtn) googleRegisterBtn.addEventListener('click', handleGoogleLogin);
+});
