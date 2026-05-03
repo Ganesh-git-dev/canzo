@@ -407,7 +407,8 @@ Visit `http://localhost:8000`
 ### Priority: High
 - [ ] Add payment integration (UPI, cards)
 - [ ] Add push notifications for order status changes
-- [ ] Add student profile management page (edit name, phone, preferences)
+- [x] Add student profile management page (edit name, phone, preferences)
+- [x] Add favorites page with heart toggle on menu items
 - [ ] Add average prep time tracking (accepted → ready timestamps)
 
 ### Priority: Medium

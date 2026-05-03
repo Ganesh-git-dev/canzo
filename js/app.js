@@ -53,6 +53,30 @@ const Cart = {
     }
 };
 
+const FAVORITES_KEY = 'canzo_favorites';
+const Favorites = {
+    items: [],
+    load() { try { const d = localStorage.getItem(FAVORITES_KEY); this.items = d ? JSON.parse(d) : []; } catch { this.items = []; } return this.items; },
+    save() { localStorage.setItem(FAVORITES_KEY, JSON.stringify(this.items)); this.updateBadges(); },
+    toggle(item) {
+        const idx = this.items.findIndex(i => i.id === item.id);
+        if (idx > -1) { this.items.splice(idx, 1); }
+        else { this.items.push({ id: item.id, name: item.name, price: item.price, image: item.image }); }
+        this.save();
+    },
+    has(id) { return this.items.some(i => i.id === id); },
+    updateBadges() {
+        const c = this.items.length;
+        document.querySelectorAll('.app-nav-link').forEach(link => {
+            if (link.getAttribute('href') === 'favorites.html') {
+                let badge = link.querySelector('.app-badge');
+                if (!badge) { badge = document.createElement('span'); badge.className = 'app-badge'; link.appendChild(badge); }
+                badge.textContent = c; badge.style.display = c > 0 ? '' : 'none';
+            }
+        });
+    }
+};
+
 const SEED_MENU = [
     { name: 'Chicken Biryani', description: 'Aromatic basmati rice with tender chicken, saffron, and spices', price: 145, category: 'biryani', image: 'assets/images/biryani.jpg', inStock: true },
     { name: 'Veg Burger', description: 'Crispy veg patty with fresh lettuce, tomato, and special sauce', price: 80, category: 'short-bites', image: 'assets/images/burger.jpg', inStock: true },
@@ -314,9 +338,33 @@ function initApp() {
     seedMenuIfEmpty(); listenToMenu(); listenToOrders(); loadCanteenSettings();
     initMenuPage(); initCartPage(); initDashboardPage(); initStudentOrders(); initStudentBills();
     initCanteenDashboard(); initCanteenMenu(); initCanteenOrders(); initCanteenBills(); initCanteenAnalytics(); initCanteenSettings();
+    initFavoritesPage();
+    initStudentSettingsPage();
 }
 
 if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initApp); } else { initApp(); }
+
+
+function renderMenuItems(container) {
+    Favorites.load();
+    const inStock = menuItems.filter(i => i.inStock);
+    if (inStock.length === 0) { container.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div><h3 class="empty-title">No items available</h3><p class="empty-text">Check back later for new dishes</p></div>'; return; }
+    container.innerHTML = inStock.map(item => '<div class="menu-item" data-id="' + item.id + '" data-category="' + item.category + '" data-name="' + item.name.toLowerCase() + '" data-desc="' + item.description.toLowerCase() + '"><div class="menu-item-image"><img src="' + item.image + '" alt="' + item.name + '" loading="lazy"></div><div class="menu-item-details"><div class="menu-item-header"><h4 class="menu-item-name">' + item.name + '</h4><span class="menu-item-price">?' + item.price + '</span></div><p class="menu-item-desc">' + item.description + '</p><button class="menu-item-fav ' + (Favorites.has(item.id) ? 'active' : '') + '" data-id="' + item.id + '">?</button><button class="menu-item-add" data-id="' + item.id + '">Add to Cart</button></div></div>').join('');
+    container.querySelectorAll('.menu-item-fav').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.closest('.menu-item').dataset.id;
+            const item = menuItems.find(i => i.id === id);
+            if (item) { Favorites.toggle(item); this.classList.toggle('active'); }
+        });
+    });
+    container.querySelectorAll('.menu-item-add').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.closest('.menu-item').dataset.id;
+            const item = menuItems.find(i => i.id === id);
+            if (item) { Cart.add({ id: item.id, name: item.name, price: item.price, image: item.image }); const t = this.textContent; this.textContent = 'Added ?'; this.style.background = '#10b981'; setTimeout(() => { this.textContent = t; this.style.background = ''; }, 1500); }
+        });
+    });
+}
 
 function listenToMenu() { onSnapshot(query(collection(db, 'menuItems'), orderBy('createdAt', 'asc')), (snap) => { menuItems = []; snap.forEach(d => menuItems.push({ id: d.id, ...d.data() })); renderMenuIfActive(); renderCanteenMenuIfActive(); renderAnalyticsIfActive(); }); }
 
@@ -324,7 +372,7 @@ function listenToOrders() { onSnapshot(query(collection(db, 'orders'), orderBy('
 
 async function loadCanteenSettings() { const d = await getDoc(doc(db, 'settings', 'canteen')); if (d.exists()) canteenSettings = { ...canteenSettings, ...d.data() }; }
 
-function renderMenuIfActive() { const c = document.querySelector('.menu-items'); if (!c || !c.dataset.initialized) return; renderMenuItems(c); }
+function renderMenuIfActive() { const c = document.querySelector('.menu-items'); if (!c) return; c.dataset.initialized = 'true'; renderMenuItems(c); }
 function renderCanteenMenuIfActive() { const l = document.getElementById('menuManagementList'); if (!l) return; renderCanteenMenuList(l); }
 function renderStudentOrdersIfActive() { const a = document.querySelector('.content-card:first-child .order-list, .order-list:not(.order-history-list)'); if (!a) return; renderStudentOrders(a); }
 function renderStudentBillsIfActive() { const b = document.querySelector('.bills-list'); if (!b) return; renderStudentBills(b); }
@@ -333,6 +381,69 @@ function renderCanteenOrdersIfActive() { const t = document.getElementById('cant
 function renderCanteenBillsIfActive() { const b = document.querySelector('.canteen-bills-list'); if (!b) return; renderCanteenBills(b); }
 function renderAnalyticsIfActive() { const c = document.getElementById('analyticsRevenueChart'); const t = document.getElementById('analyticsTopItems'); if (!c && !t) return; renderAnalytics(c, t, document.getElementById('analyticsFrequencyGrid'), document.getElementById('analyticsLowDemand')); }
 function renderDashboardIfActive() { const e = document.querySelector('.stat-card[data-stat="total"] .stat-card-value'); if (!e) return; updateDashboardStats(); }
+
+
+function initFavoritesPage() {
+    const container = document.getElementById('favoritesList');
+    if (!container) return;
+    Favorites.load();
+    if (Favorites.items.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div><h3 class="empty-title">No favorites yet</h3><p class="empty-text">Tap the heart icon on any menu item to add it here</p><a href="menu.html" class="btn btn-primary" style="margin-top:16px;">Browse Menu</a></div>';
+        return;
+    }
+    container.innerHTML = Favorites.items.map(item => '<div class="menu-item" data-id="' + item.id + '"><div class="menu-item-image"><img src="' + item.image + '" alt="' + item.name + '" loading="lazy"></div><div class="menu-item-details"><div class="menu-item-header"><h4 class="menu-item-name">' + item.name + '</h4><span class="menu-item-price">?' + item.price + '</span></div><button class="menu-item-add" data-id="' + item.id + '">Add to Cart</button></div></div>').join('');
+    container.querySelectorAll('.menu-item-add').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const item = Favorites.items.find(i => i.id === id);
+            if (item) { Cart.add({ id: item.id, name: item.name, price: item.price, image: item.image }); const t = this.textContent; this.textContent = 'Added ?'; this.style.background = '#10b981'; setTimeout(() => { this.textContent = t; this.style.background = ''; }, 1500); }
+        });
+    });
+}
+
+function initStudentSettingsPage() {
+    const nameInput = document.getElementById('studentName');
+    const phoneInput = document.getElementById('studentPhone');
+    const deptInput = document.getElementById('studentDept');
+    const yearInput = document.getElementById('studentYear');
+    const regInput = document.getElementById('studentReg');
+    if (!nameInput) return;
+    if (currentUser) {
+        nameInput.value = currentUser.name || '';
+        phoneInput.value = currentUser.phone || '';
+        deptInput.value = currentUser.department || '';
+        yearInput.value = currentUser.year || '';
+        regInput.value = currentUser.registerNumber || '';
+    }
+    document.getElementById('saveStudentSettings')?.addEventListener('click', async () => {
+        const name = nameInput.value;
+        const phone = phoneInput.value;
+        const dept = deptInput.value;
+        const year = yearInput.value;
+        const reg = regInput.value;
+        try {
+            await setDoc(doc(db, 'users', currentUser.uid), { name, phone, department: dept, year, registerNumber: reg, updatedAt: serverTimestamp() }, { merge: true });
+            currentUser.name = name; currentUser.phone = phone; currentUser.department = dept; currentUser.year = year; currentUser.registerNumber = reg;
+            alert('Profile updated!');
+        } catch (e) { alert('Failed: ' + e.message); }
+    });
+    // Theme buttons
+    document.getElementById('themeLightBtn')?.addEventListener('click', () => {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('canzo_theme', 'light');
+    });
+    document.getElementById('themeDarkBtn')?.addEventListener('click', () => {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('canzo_theme', 'dark');
+    });
+    // Clear buttons
+    document.getElementById('clearCartBtn')?.addEventListener('click', () => {
+        if (confirm('Clear cart?')) { Cart.clear(); alert('Cart cleared'); }
+    });
+    document.getElementById('clearFavoritesBtn')?.addEventListener('click', () => {
+        if (confirm('Clear favorites?')) { Favorites.clear(); Favorites.updateBadges(); alert('Favorites cleared'); }
+    });
+}
 
 function updateDashboardStats() {
     const totalOrders = allOrders.length;
