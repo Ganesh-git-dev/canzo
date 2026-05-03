@@ -188,6 +188,7 @@ async function seedMenuIfEmpty() {
 
 export async function handleLogin(e) {
     e.preventDefault();
+    if (!db) { alert('Login failed: Firebase not initialized. Please refresh.'); return; }
     const email = document.getElementById('email')?.value || '';
     const password = document.getElementById('password')?.value || '';
     try {
