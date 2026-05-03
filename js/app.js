@@ -4,16 +4,15 @@
    Firebase Auth + Firestore for all data
    ============================================ */
 
-import { auth, db } from './firebase-config.js';
 import {
+    auth,
+    db,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signInWithPopup,
     GoogleAuthProvider,
     signOut,
-    onAuthStateChanged
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import {
+    onAuthStateChanged,
     collection,
     doc,
     setDoc,
@@ -26,7 +25,7 @@ import {
     query,
     orderBy,
     serverTimestamp
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+} from './firebase-config.js';
 
 const STATUS_FLOW = ['accepted', 'preparing', 'prepared', 'delivered'];
 const STATUS_LABELS = { accepted: 'Accepted', preparing: 'Preparing', prepared: 'Prepared', delivered: 'Delivered' };
