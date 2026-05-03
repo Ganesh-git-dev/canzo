@@ -217,6 +217,7 @@ export async function handleGoogleLogin() {
 }
 
 let profileModalUserData = null;
+let duringRegistration = false;
 
 function showProfileCompleteModal(user) {
     profileModalUserData = user;
@@ -298,12 +299,18 @@ export async function handleRegister(e) {
     const urlParams = new URLSearchParams(window.location.search);
     const role = urlParams.get('role') || 'student';
     try {
+        duringRegistration = true;
         const cred = await createUserWithEmailAndPassword(auth, email, password);
         const userData = { email, name, role, phone, department, year, registerNumber, balance: 0, totalOrders: 0, totalSpent: 0, favoriteItems: [], dietaryPreferences: [], createdAt: serverTimestamp(), updatedAt: serverTimestamp() };
         if (role === 'canteen') { delete userData.year; delete userData.registerNumber; delete userData.balance; delete userData.totalOrders; delete userData.totalSpent; delete userData.favoriteItems; delete userData.dietaryPreferences; userData.managerName = name; }
         await setDoc(doc(db, 'users', cred.user.uid), userData);
-        window.location.href = role === 'canteen' ? 'canteen-dashboard.html' : 'dashboard.html';
-    } catch (error) { alert('Registration failed: ' + error.message); }
+        if (role === 'student') {
+            showProfileCompleteModal(cred.user);
+        } else {
+            window.location.href = 'canteen-dashboard.html';
+        }
+        duringRegistration = false;
+    } catch (error) { duringRegistration = false; alert('Registration failed: ' + error.message); }
 }
 
 function initApp() {
@@ -313,7 +320,10 @@ function initApp() {
     const toggleBtn = document.createElement('button');
     toggleBtn.className = 'theme-toggle'; toggleBtn.setAttribute('aria-label', 'Toggle dark mode');
     toggleBtn.innerHTML = `<svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>`;
-    toggleBtn.addEventListener('click', () => { const c = document.documentElement.getAttribute('data-theme'); const n = c === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', n); localStorage.setItem('canzo_theme', n); });
+    const _theme = document.documentElement.getAttribute('data-theme') || 'light';
+    toggleBtn.querySelector('.sun-icon').style.display = _theme === 'dark' ? 'none' : '';
+    toggleBtn.querySelector('.moon-icon').style.display = _theme === 'dark' ? '' : 'none';
+    toggleBtn.addEventListener('click', () => { const c = document.documentElement.getAttribute('data-theme'); const n = c === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', n); localStorage.setItem('canzo_theme', n); toggleBtn.querySelector('.sun-icon').style.display = n === 'dark' ? 'none' : ''; toggleBtn.querySelector('.moon-icon').style.display = n === 'dark' ? '' : 'none'; });
     document.body.appendChild(toggleBtn);
 
     const sidebarToggle = document.getElementById('sidebarToggle');
@@ -349,19 +359,19 @@ function renderMenuItems(container) {
     Favorites.load();
     const inStock = menuItems.filter(i => i.inStock);
     if (inStock.length === 0) { container.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div><h3 class="empty-title">No items available</h3><p class="empty-text">Check back later for new dishes</p></div>'; return; }
-    container.innerHTML = inStock.map(item => '<div class="menu-item" data-id="' + item.id + '" data-category="' + item.category + '" data-name="' + item.name.toLowerCase() + '" data-desc="' + item.description.toLowerCase() + '"><div class="menu-item-image"><img src="' + item.image + '" alt="' + item.name + '" loading="lazy"></div><div class="menu-item-details"><div class="menu-item-header"><h4 class="menu-item-name">' + item.name + '</h4><span class="menu-item-price">?' + item.price + '</span></div><p class="menu-item-desc">' + item.description + '</p><button class="menu-item-fav ' + (Favorites.has(item.id) ? 'active' : '') + '" data-id="' + item.id + '">?</button><button class="menu-item-add" data-id="' + item.id + '">Add to Cart</button></div></div>').join('');
+    container.innerHTML = inStock.map(item => '<div class="menu-item" data-id="' + item.id + '" data-category="' + item.category + '" data-name="' + item.name.toLowerCase() + '" data-desc="' + item.description.toLowerCase() + '"><div class="menu-item-image"><img src="' + item.image + '" alt="' + item.name + '" loading="lazy"></div><div class="menu-item-details"><div class="menu-item-header"><h4 class="menu-item-name">' + item.name + '</h4><span class="menu-item-price">₹' + item.price + '</span></div><p class="menu-item-desc">' + item.description + '</p><button class="menu-item-fav ' + (Favorites.has(item.id) ? 'active' : '') + '" data-id="' + item.id + '"><svg viewBox="0 0 24 24" fill="' + (Favorites.has(item.id) ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button><button class="menu-item-add" data-id="' + item.id + '">Add to Cart</button></div></div>').join('');
     container.querySelectorAll('.menu-item-fav').forEach(btn => {
         btn.addEventListener('click', function() {
             const id = this.closest('.menu-item').dataset.id;
             const item = menuItems.find(i => i.id === id);
-            if (item) { Favorites.toggle(item); this.classList.toggle('active'); }
+            if (item) { Favorites.toggle(item); this.classList.toggle('active'); this.querySelector('svg').setAttribute('fill', Favorites.has(id) ? 'currentColor' : 'none'); }
         });
     });
     container.querySelectorAll('.menu-item-add').forEach(btn => {
         btn.addEventListener('click', function() {
             const id = this.closest('.menu-item').dataset.id;
             const item = menuItems.find(i => i.id === id);
-            if (item) { Cart.add({ id: item.id, name: item.name, price: item.price, image: item.image }); const t = this.textContent; this.textContent = 'Added ?'; this.style.background = '#10b981'; setTimeout(() => { this.textContent = t; this.style.background = ''; }, 1500); }
+            if (item) { Cart.add({ id: item.id, name: item.name, price: item.price, image: item.image }); const t = this.textContent; this.textContent = 'Added ✓'; this.style.background = '#10b981'; setTimeout(() => { this.textContent = t; this.style.background = ''; }, 1500); }
         });
     });
 }
@@ -391,12 +401,12 @@ function initFavoritesPage() {
         container.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div><h3 class="empty-title">No favorites yet</h3><p class="empty-text">Tap the heart icon on any menu item to add it here</p><a href="menu.html" class="btn btn-primary" style="margin-top:16px;">Browse Menu</a></div>';
         return;
     }
-    container.innerHTML = Favorites.items.map(item => '<div class="menu-item" data-id="' + item.id + '"><div class="menu-item-image"><img src="' + item.image + '" alt="' + item.name + '" loading="lazy"></div><div class="menu-item-details"><div class="menu-item-header"><h4 class="menu-item-name">' + item.name + '</h4><span class="menu-item-price">?' + item.price + '</span></div><button class="menu-item-add" data-id="' + item.id + '">Add to Cart</button></div></div>').join('');
+    container.innerHTML = Favorites.items.map(item => '<div class="menu-item" data-id="' + item.id + '"><div class="menu-item-image"><img src="' + item.image + '" alt="' + item.name + '" loading="lazy"></div><div class="menu-item-details"><div class="menu-item-header"><h4 class="menu-item-name">' + item.name + '</h4><span class="menu-item-price">₹' + item.price + '</span></div><button class="menu-item-add" data-id="' + item.id + '">Add to Cart</button></div></div>').join('');
     container.querySelectorAll('.menu-item-add').forEach(btn => {
         btn.addEventListener('click', function() {
             const id = this.dataset.id;
             const item = Favorites.items.find(i => i.id === id);
-            if (item) { Cart.add({ id: item.id, name: item.name, price: item.price, image: item.image }); const t = this.textContent; this.textContent = 'Added ?'; this.style.background = '#10b981'; setTimeout(() => { this.textContent = t; this.style.background = ''; }, 1500); }
+            if (item) { Cart.add({ id: item.id, name: item.name, price: item.price, image: item.image }); const t = this.textContent; this.textContent = 'Added ✓'; this.style.background = '#10b981'; setTimeout(() => { this.textContent = t; this.style.background = ''; }, 1500); }
         });
     });
 }
@@ -446,13 +456,419 @@ function initStudentSettingsPage() {
 }
 
 function updateDashboardStats() {
-    const totalOrders = allOrders.length;
-    const thisMonth = allOrders.filter(o => { const d = new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt); const n = new Date(); return d.getMonth() === n.getMonth() && d.getFullYear() === n.getFullYear(); }).length;
-    const totalSpent = allOrders.filter(o => o.status === 'delivered').reduce((s, o) => s + o.total, 0);
+    const myOrders = currentUser ? allOrders.filter(o => o.userId === currentUser.uid) : [];
+    const totalOrders = myOrders.length;
+    const thisMonth = myOrders.filter(o => { const d = new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt); const n = new Date(); return d.getMonth() === n.getMonth() && d.getFullYear() === n.getFullYear(); }).length;
+    const totalSpent = myOrders.filter(o => o.status === 'picked').reduce((s, o) => s + (o.total || 0), 0);
     const tE = document.querySelector('.stat-card[data-stat="total"] .stat-card-value');
     const mE = document.querySelector('.stat-card[data-stat="month"] .stat-card-value');
     const sE = document.querySelector('.stat-card[data-stat="spent"] .stat-card-value');
-    if (tE) tE.textContent = totalOrders; if (mE) mE.textContent = thisMonth; if (sE) sE.textContent = `â‚¹${totalSpent}`;
+    if (tE) tE.textContent = totalOrders; if (mE) mE.textContent = thisMonth; if (sE) sE.textContent = `₹${totalSpent}`;
     const sG = document.querySelector('.stats-grid');
     if (sG) { const ob = new IntersectionObserver(en => { en.forEach(e => { if (e.isIntersecting) { document.querySelectorAll('.stat-card-value').forEach(el => animateCounter(el)); ob.disconnect(); } }); }, { threshold: 0.5 }); ob.observe(sG); }
+}
+
+function initMenuPage() {
+    const catContainer = document.querySelector('.menu-categories');
+    const itemsContainer = document.querySelector('.menu-items');
+    if (!catContainer || !itemsContainer) return;
+    Favorites.load(); Cart.load();
+    function buildTabs() {
+        const cats = ['all', ...new Set(menuItems.map(i => i.category))];
+        const labels = { all: 'All', biryani: 'Biryani', pizza: 'Pizza', burgers: 'Burgers', drinks: 'Drinks', snacks: 'Snacks', desserts: 'Desserts', 'short-bites': 'Short Bites', pastry: 'Pastry', maggie: 'Maggie', 'fried-rice': 'Fried Rice', juices: 'Juices' };
+        catContainer.innerHTML = cats.map(c => '<button class="menu-category-btn' + (c === 'all' ? ' active' : '') + '" data-category="' + c + '">' + (labels[c] || c) + '</button>').join('');
+        catContainer.querySelectorAll('.menu-category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                catContainer.querySelectorAll('.menu-category-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                renderMenuItems(itemsContainer, this.dataset.category);
+            });
+        });
+    }
+    buildTabs();
+    renderMenuItems(itemsContainer, 'all');
+    const searchInput = document.getElementById('menuSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const q = this.value.toLowerCase();
+            itemsContainer.querySelectorAll('.menu-item').forEach(item => {
+                const name = item.dataset.name;
+                const desc = item.dataset.desc;
+                item.style.display = (name.includes(q) || desc.includes(q)) ? '' : 'none';
+            });
+        });
+    }
+}
+
+function renderMenuItems(container, filterCat) {
+    Favorites.load();
+    let items = menuItems.filter(i => i.inStock);
+    if (filterCat && filterCat !== 'all') items = items.filter(i => i.category === filterCat);
+    if (items.length === 0) { container.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div><h3 class="empty-title">No items available</h3><p class="empty-text">Check back later for new dishes</p></div>'; return; }
+    container.innerHTML = items.map(item => '<div class="menu-item" data-id="' + item.id + '" data-category="' + item.category + '" data-name="' + item.name.toLowerCase() + '" data-desc="' + item.description.toLowerCase() + '"><div class="menu-item-image"><img src="' + item.image + '" alt="' + item.name + '" loading="lazy"></div><div class="menu-item-details"><div class="menu-item-header"><h4 class="menu-item-name">' + item.name + '</h4><span class="menu-item-price">₹' + item.price + '</span></div><p class="menu-item-desc">' + item.description + '</p><button class="menu-item-fav ' + (Favorites.has(item.id) ? 'active' : '') + '" data-id="' + item.id + '"><svg viewBox="0 0 24 24" fill="' + (Favorites.has(item.id) ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button><button class="menu-item-add" data-id="' + item.id + '">Add to Cart</button></div></div>').join('');
+    container.querySelectorAll('.menu-item-fav').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.closest('.menu-item').dataset.id;
+            const item = menuItems.find(i => i.id === id);
+            if (item) { Favorites.toggle(item); this.classList.toggle('active'); this.querySelector('svg').setAttribute('fill', Favorites.has(id) ? 'currentColor' : 'none'); }
+        });
+    });
+    container.querySelectorAll('.menu-item-add').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.closest('.menu-item').dataset.id;
+            const item = menuItems.find(i => i.id === id);
+            if (item) { Cart.add({ id: item.id, name: item.name, price: item.price, image: item.image }); const t = this.textContent; this.textContent = 'Added ✓'; this.style.background = '#10b981'; setTimeout(() => { this.textContent = t; this.style.background = ''; }, 1500); }
+        });
+    });
+}
+
+function initCanteenMenu() {
+    const list = document.getElementById('menuManagementList');
+    const catBtns = document.querySelectorAll('#menuCategories .menu-category-btn');
+    if (!list) return;
+    let currentFilter = 'all';
+    function renderList() {
+        let items = menuItems;
+        if (currentFilter !== 'all') items = items.filter(i => i.category === currentFilter);
+        if (items.length === 0) { list.innerHTML = '<div class="empty-state" id="menuEmptyState"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div><h3 class="empty-title">No menu items yet</h3><p class="empty-text">Click "Add Item" to create your first menu item</p></div>'; return; }
+        list.innerHTML = items.map(item => {
+            const catLabels = { biryani: 'Biryani', pizza: 'Pizza', burgers: 'Burgers', drinks: 'Drinks', snacks: 'Snacks', desserts: 'Desserts', 'short-bites': 'Short Bites', pastry: 'Pastry', maggie: 'Maggie', 'fried-rice': 'Fried Rice', juices: 'Juices' };
+            return '<div class="menu-management-item" data-id="' + item.id + '" data-category="' + item.category + '"><div class="menu-management-item-image"><img src="' + item.image + '" alt="' + item.name + '" loading="lazy"></div><div class="menu-management-item-details"><div class="menu-management-item-header"><h4 class="menu-management-item-name">' + item.name + '</h4><span class="menu-management-item-category">' + (catLabels[item.category] || item.category) + '</span></div><p class="menu-management-item-desc">' + item.description + '</p><div class="menu-management-item-meta"><span class="menu-management-item-price">₹' + item.price + '</span><label class="menu-management-item-toggle"><input type="checkbox" ' + (item.inStock ? 'checked' : '') + ' data-id="' + item.id + '"><span class="menu-management-item-toggle-slider"></span><span class="menu-management-item-toggle-label">' + (item.inStock ? 'In Stock' : 'Out of Stock') + '</span></label></div></div><div class="menu-management-item-actions"><button class="menu-management-item-edit" data-id="' + item.id + '"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="menu-management-item-delete" data-id="' + item.id + '"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></div></div>';
+        }).join('');
+        list.querySelectorAll('.menu-management-item-toggle input').forEach(cb => {
+            cb.addEventListener('change', async function() {
+                const id = this.dataset.id;
+                const inStock = this.checked;
+                try {
+                    await updateDoc(doc(db, 'menuItems', id), { inStock, updatedAt: serverTimestamp() });
+                } catch(e) { alert('Failed to update stock: ' + e.message); this.checked = !inStock; }
+            });
+        });
+        list.querySelectorAll('.menu-management-item-edit').forEach(btn => {
+            btn.addEventListener('click', function() { openMenuModal(this.dataset.id); });
+        });
+        list.querySelectorAll('.menu-management-item-delete').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                if (!confirm('Delete this item?')) return;
+                try {
+                    await deleteDoc(doc(db, 'menuItems', this.dataset.id));
+                } catch(e) { alert('Failed to delete: ' + e.message); }
+            });
+        });
+    }
+    renderList();
+    catBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            catBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentFilter = this.dataset.category;
+            renderList();
+        });
+    });
+    const addBtn = document.getElementById('addMenuItemBtn');
+    if (addBtn) addBtn.addEventListener('click', () => openMenuModal(null));
+    const modal = document.getElementById('menuModal');
+    const closeBtn = document.getElementById('menuModalClose');
+    const cancelBtn = document.getElementById('menuModalCancel');
+    const form = document.getElementById('menuForm');
+    if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+    if (cancelBtn) cancelBtn.addEventListener('click', () => modal.classList.remove('active'));
+    let editingId = null;
+    window.openMenuModal = function(id) {
+        editingId = id || null;
+        form.reset();
+        document.getElementById('menuModalTitle').textContent = id ? 'Edit Item' : 'Add New Item';
+        document.getElementById('menuModalSave').textContent = id ? 'Save Changes' : 'Add Item';
+        if (id) {
+            const item = menuItems.find(i => i.id === id);
+            if (item) {
+                document.getElementById('menuItemName').value = item.name;
+                document.getElementById('menuItemDesc').value = item.description;
+                document.getElementById('menuItemPrice').value = item.price;
+                document.getElementById('menuItemCategory').value = item.category;
+                document.getElementById('menuItemImage').value = item.image;
+            }
+        }
+        modal.classList.add('active');
+    };
+    if (form) form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const data = {
+            name: document.getElementById('menuItemName').value,
+            description: document.getElementById('menuItemDesc').value,
+            price: Number(document.getElementById('menuItemPrice').value),
+            category: document.getElementById('menuItemCategory').value,
+            image: document.getElementById('menuItemImage').value || 'assets/images/biryani.jpg',
+            updatedAt: serverTimestamp()
+        };
+        try {
+            if (editingId) {
+                await updateDoc(doc(db, 'menuItems', editingId), data);
+            } else {
+                data.inStock = true;
+                data.createdAt = serverTimestamp();
+                await addDoc(collection(db, 'menuItems'), data);
+            }
+            modal.classList.remove('active');
+        } catch(err) { alert('Failed to save: ' + err.message); }
+    });
+}
+
+function initCanteenOrders() {
+    const tableBody = document.getElementById('canteenOrdersTableBody');
+    const tabs = document.querySelectorAll('#canteenOrdersTabs .canteen-orders-tab');
+    const statusFilter = document.getElementById('orderStatusFilter');
+    const slotFilter = document.getElementById('orderSlotFilter');
+    const searchInput = document.getElementById('orderSearchInput');
+    if (!tableBody) return;
+    let currentTab = 'active';
+    function getFilteredOrders() {
+        let orders = allOrders;
+        if (currentTab === 'active') orders = orders.filter(o => !['picked', 'cancelled'].includes(o.status));
+        else if (currentTab === 'completed') orders = orders.filter(o => o.status === 'picked');
+        else if (currentTab === 'cancelled') orders = orders.filter(o => o.status === 'cancelled');
+        const sf = statusFilter?.value;
+        if (sf && sf !== 'all') orders = orders.filter(o => o.status === sf);
+        const slf = slotFilter?.value;
+        if (slf && slf !== 'all') orders = orders.filter(o => o.slot?.toLowerCase().includes(slf));
+        const q = searchInput?.value.toLowerCase();
+        if (q) orders = orders.filter(o => (o.studentName || '').toLowerCase().includes(q) || (o.billNumber || '').toLowerCase().includes(q));
+        return orders;
+    }
+    function renderTable() {
+        const orders = getFilteredOrders();
+        document.querySelectorAll('#canteenOrdersTabs .canteen-orders-tab').forEach(t => {
+            const tab = t.dataset.tab;
+            const count = allOrders.filter(o => {
+                if (tab === 'active') return !['picked', 'cancelled'].includes(o.status);
+                if (tab === 'completed') return o.status === 'picked';
+                if (tab === 'cancelled') return o.status === 'cancelled';
+                return true;
+            }).length;
+            t.textContent = t.textContent.split('(')[0] + '(' + count + ')';
+        });
+        if (orders.length === 0) { tableBody.innerHTML = '<div class="empty-state"><p>No orders found</p></div>'; return; }
+        const statusColors = { pending: 'yellow', accepted: 'blue', preparing: 'orange', ready: 'purple', picked: 'green', cancelled: 'red' };
+        tableBody.innerHTML = orders.map(o => {
+            const items = (o.items || []).map(i => i.name + ' x' + i.qty).join(', ');
+            return '<div class="canteen-order-row" data-id="' + o.id + '"><div class="canteen-order-col"><span class="order-id">#' + (o.billNumber || o.id.slice(0,8)) + '</span></div><div class="canteen-order-col"><div class="canteen-order-student">' + (o.studentName || 'Unknown') + '</div><div class="canteen-order-items">' + items + '</div></div><div class="canteen-order-col">' + (o.slot || '-') + '</div><div class="canteen-order-col"><span class="status-badge status-badge--' + (statusColors[o.status] || 'yellow') + '">' + o.status + '</span></div><div class="canteen-order-col"><select class="form-select form-select--sm order-status-select" data-id="' + o.id + '"><option value="pending"' + (o.status === 'pending' ? ' selected' : '') + '>Pending</option><option value="accepted"' + (o.status === 'accepted' ? ' selected' : '') + '>Accepted</option><option value="preparing"' + (o.status === 'preparing' ? ' selected' : '') + '>Preparing</option><option value="ready"' + (o.status === 'ready' ? ' selected' : '') + '>Ready</option><option value="picked"' + (o.status === 'picked' ? ' selected' : '') + '>Picked</option><option value="cancelled"' + (o.status === 'cancelled' ? ' selected' : '') + '>Cancelled</option></select></div></div>';
+        }).join('');
+        tableBody.querySelectorAll('.order-status-select').forEach(sel => {
+            sel.addEventListener('change', async function() {
+                const id = this.dataset.id;
+                const newStatus = this.value;
+                try {
+                    await updateDoc(doc(db, 'orders', id), { status: newStatus, updatedAt: serverOrders });
+                } catch(e) { alert('Failed to update status: ' + e.message); location.reload(); }
+            });
+        });
+    }
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            tabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            currentTab = this.dataset.tab;
+            renderTable();
+        });
+    });
+    statusFilter?.addEventListener('change', renderTable);
+    slotFilter?.addEventListener('change', renderTable);
+    searchInput?.addEventListener('input', renderTable);
+    renderTable();
+}
+
+function initCanteenDashboard() {
+    const statTodayOrders = document.getElementById('statTodayOrders');
+    const statTodayRevenue = document.getElementById('statTodayRevenue');
+    const statItemsSold = document.getElementById('statItemsSold');
+    const statAvgPrep = document.getElementById('statAvgPrep');
+    const liveQueue = document.getElementById('liveOrderQueue');
+    const statusToggle = document.getElementById('canteenStatusToggle');
+    if (statTodayOrders) {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const todaysOrders = allOrders.filter(o => {
+            const d = new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt);
+            return d >= today;
+        });
+        statTodayOrders.textContent = todaysOrders.length;
+        const revenue = todaysOrders.filter(o => o.status === 'picked').reduce((s, o) => s + (o.total || 0), 0);
+        statTodayRevenue.textContent = '₹' + revenue;
+        statItemsSold.textContent = allOrders.filter(o => !['picked', 'cancelled'].includes(o.status)).length;
+        statAvgPrep.textContent = allOrders.length;
+    }
+    if (liveQueue) renderLiveQueue(liveQueue);
+    if (statusToggle) {
+        loadCanteenSettings().then(() => {
+            const label = statusToggle.querySelector('.canteen-status-label');
+            const dot = statusToggle.querySelector('.canteen-status-dot');
+            function updateUI() {
+                if (label) label.textContent = canteenSettings.isOpen ? 'Open' : 'Closed';
+                if (dot) { dot.className = 'canteen-status-dot canteen-status-dot--' + (canteenSettings.isOpen ? 'open' : 'closed'); }
+            }
+            updateUI();
+            statusToggle.style.cursor = 'pointer';
+            statusToggle.addEventListener('click', async () => {
+                canteenSettings.isOpen = !canteenSettings.isOpen;
+                try {
+                    await setDoc(doc(db, 'settings', 'canteen'), { isOpen: canteenSettings.isOpen, updatedAt: serverTimestamp() }, { merge: true });
+                    updateUI();
+                } catch(e) { alert('Failed to update: ' + e.message); canteenSettings.isOpen = !canteenSettings.isOpen; updateUI(); }
+            });
+        });
+    }
+}
+
+function renderLiveQueue(container) {
+    const active = allOrders.filter(o => !['picked', 'cancelled'].includes(o.status));
+    if (active.length === 0) { container.innerHTML = '<div class="canteen-empty-state">No active orders</div>'; return; }
+    container.innerHTML = active.map(o => {
+        return '<div class="canteen-live-order" data-id="' + o.id + '"><div class="canteen-live-order-header"><span class="canteen-live-order-id">#' + (o.billNumber || o.id.slice(0,8)) + '</span><span class="status-badge status-badge--' + (o.status === 'pending' ? 'yellow' : o.status === 'accepted' ? 'blue' : o.status === 'preparing' ? 'orange' : 'purple') + '">' + o.status + '</span></div><div class="canteen-live-order-customer">' + (o.studentName || 'Unknown') + '</div><div class="canteen-live-order-items">' + (o.items || []).map(i => i.name + ' x' + i.qty).join(', ') + '</div><div class="canteen-live-order-actions"><button class="btn btn-sm btn-accept" data-id="' + o.id + '" data-action="accepted">Accept</button><button class="btn btn-sm btn-reject" data-id="' + o.id + '" data-action="cancelled">Reject</button><button class="btn btn-sm btn-ready" data-id="' + o.id + '" data-action="preparing">Preparing</button><button class="btn btn-sm btn-pick" data-id="' + o.id + '" data-action="ready">Ready</button></div></div>';
+    }).join('');
+    container.querySelectorAll('.btn-accept, .btn-reject, .btn-ready, .btn-pick').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const id = this.dataset.id;
+            const action = this.dataset.action;
+            try {
+                await updateDoc(doc(db, 'orders', id), { status: action, updatedAt: serverTimestamp() });
+            } catch(e) { alert('Failed: ' + e.message); }
+        });
+    });
+}
+
+function initCanteenSettings() {
+    const saveBtn = document.getElementById('saveSettingsBtn');
+    const resetOrdersBtn = document.getElementById('resetOrdersBtn');
+    const resetMenuBtn = document.getElementById('resetMenuBtn');
+    if (!saveBtn) return;
+    loadCanteenSettings().then(() => {
+        document.getElementById('canteenNameInput').value = canteenSettings.name || 'Food Court';
+        document.getElementById('canteenLocationInput').value = canteenSettings.location || '';
+        document.getElementById('canteenPhone').value = canteenSettings.phone || '';
+        document.getElementById('canteenManager').value = canteenSettings.manager || '';
+        const hours = canteenSettings.hours || {};
+        if (hours.morning) { const p = hours.morning.split(' - '); if (p[0]) document.getElementById('morningStart').value = p[0]; if (p[1]) document.getElementById('morningEnd').value = p[1]; }
+        if (hours.lunch) { const p = hours.lunch.split(' - '); if (p[0]) document.getElementById('lunchStart').value = p[0]; if (p[1]) document.getElementById('lunchEnd').value = p[1]; }
+        if (hours.evening) { const p = hours.evening.split(' - '); if (p[0]) document.getElementById('eveningStart').value = p[0]; if (p[1]) document.getElementById('eveningEnd').value = p[1]; }
+        document.getElementById('autoRejectToggle').checked = canteenSettings.autoReject || false;
+        document.getElementById('autoRejectTime').value = canteenSettings.autoRejectTime || 10;
+        document.getElementById('maxOrdersInput').value = canteenSettings.maxOrders || 30;
+    });
+    saveBtn.addEventListener('click', async () => {
+        const name = document.getElementById('canteenNameInput').value;
+        const location = document.getElementById('canteenLocationInput').value;
+        const phone = document.getElementById('canteenPhone').value;
+        const manager = document.getElementById('canteenManager').value;
+        const hours = {
+            morning: document.getElementById('morningStart').value + ' - ' + document.getElementById('morningEnd').value,
+            lunch: document.getElementById('lunchStart').value + ' - ' + document.getElementById('lunchEnd').value,
+            evening: document.getElementById('eveningStart').value + ' - ' + document.getElementById('eveningEnd').value
+        };
+        const data = { name, location, phone, manager, hours, isOpen: canteenSettings.isOpen, autoReject: document.getElementById('autoRejectToggle').checked, autoRejectTime: Number(document.getElementById('autoRejectTime').value), maxOrders: Number(document.getElementById('maxOrdersInput').value), updatedAt: serverTimestamp() };
+        try {
+            await setDoc(doc(db, 'settings', 'canteen'), data, { merge: true });
+            canteenSettings = { ...canteenSettings, ...data };
+            alert('Settings saved!');
+        } catch(e) { alert('Failed: ' + e.message); }
+    });
+    resetOrdersBtn?.addEventListener('click', async () => {
+        if (!confirm('Clear ALL orders? This cannot be undone.')) return;
+        try {
+            const snap = await getDocs(collection(db, 'orders'));
+            const batch = [];
+            snap.forEach(d => batch.push(deleteDoc(doc(db, 'orders', d.id))));
+            await Promise.all(batch);
+            alert('Orders cleared!');
+        } catch(e) { alert('Failed: ' + e.message); }
+    });
+    resetMenuBtn?.addEventListener('click', async () => {
+        if (!confirm('Reset menu to defaults? All custom items will be removed.')) return;
+        try {
+            const snap = await getDocs(collection(db, 'menuItems'));
+            const batch = [];
+            snap.forEach(d => batch.push(deleteDoc(doc(db, 'menuItems', d.id))));
+            await Promise.all(batch);
+            await seedMenuIfEmpty();
+            alert('Menu reset!');
+        } catch(e) { alert('Failed: ' + e.message); }
+    });
+}
+
+function initStudentOrders() {
+    const orderList = document.querySelector('.order-list:not(.order-history-list)');
+    const historyList = document.querySelector('.order-history-list');
+    if (!orderList) return;
+    const active = allOrders.filter(o => o.studentId === currentUser?.uid && !['picked', 'cancelled'].includes(o.status));
+    const history = allOrders.filter(o => o.studentId === currentUser?.uid && ['picked', 'cancelled'].includes(o.status));
+    if (active.length === 0) { orderList.innerHTML = '<div class="empty-state"><p>No active orders</p></div>'; } else {
+        orderList.innerHTML = active.map(o => '<div class="order-card"><div class="order-card-header"><span class="order-id">#' + (o.billNumber || o.id.slice(0,8)) + '</span><span class="status-badge status-badge--' + (o.status === 'pending' ? 'yellow' : o.status === 'accepted' ? 'blue' : o.status === 'preparing' ? 'orange' : 'purple') + '">' + o.status + '</span></div><div class="order-card-items">' + (o.items || []).map(i => i.name + ' x' + i.qty).join(', ') + '</div><div class="order-card-total">₹' + (o.total || 0) + '</div></div>').join('');
+    }
+    if (historyList) {
+        if (history.length === 0) { historyList.innerHTML = '<div class="empty-state"><p>No order history</p></div>'; } else {
+            historyList.innerHTML = history.map(o => '<div class="order-card"><div class="order-card-header"><span class="order-id">#' + (o.billNumber || o.id.slice(0,8)) + '</span><span class="status-badge status-badge--' + (o.status === 'picked' ? 'green' : 'red') + '">' + o.status + '</span></div><div class="order-card-items">' + (o.items || []).map(i => i.name + ' x' + i.qty).join(', ') + '</div><div class="order-card-total">₹' + (o.total || 0) + '</div></div>').join('');
+        }
+    }
+}
+
+function initCartPage() {
+    const cartItems = document.querySelector('.cart-items');
+    const cartSummary = document.querySelector('.cart-summary');
+    if (!cartItems) return;
+    Cart.load();
+    if (Cart.items.length === 0) {
+        cartItems.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg></div><h3 class="empty-title">Cart is empty</h3><a href="menu.html" class="btn btn-primary">Browse Menu</a></div>';
+        if (cartSummary) cartSummary.style.display = 'none';
+        return;
+    }
+    cartItems.innerHTML = Cart.items.map(item => '<div class="cart-item" data-id="' + item.id + '"><div class="cart-item-image"><img src="' + item.image + '" alt="' + item.name + '"></div><div class="cart-item-details"><h4 class="cart-item-name">' + item.name + '</h4><span class="cart-item-price">₹' + item.price + '</span></div><div class="cart-item-qty"><button class="qty-btn qty-minus" data-id="' + item.id + '">−</button><span class="qty-value">' + item.qty + '</span><button class="qty-btn qty-plus" data-id="' + item.id + '">+</button></div><button class="cart-item-remove" data-id="' + item.id + '">&times;</button></div>').join('');
+    cartItems.querySelectorAll('.qty-plus').forEach(btn => btn.addEventListener('click', function() { Cart.updateQty(this.dataset.id, (Cart.items.find(i => i.id === this.dataset.id)?.qty || 0) + 1); initCartPage(); }));
+    cartItems.querySelectorAll('.qty-minus').forEach(btn => btn.addEventListener('click', function() { Cart.updateQty(this.dataset.id, (Cart.items.find(i => i.id === this.dataset.id)?.qty || 0) - 1); initCartPage(); }));
+    cartItems.querySelectorAll('.cart-item-remove').forEach(btn => btn.addEventListener('click', function() { Cart.remove(this.dataset.id); initCartPage(); }));
+    const subtotal = Cart.total();
+    const tax = Math.round(subtotal * 0.05);
+    const total = subtotal + tax;
+    const subtotalEl = document.getElementById('cartSubtotal');
+    const taxEl = document.getElementById('cartTax');
+    const totalEl = document.getElementById('cartTotal');
+    if (subtotalEl) subtotalEl.textContent = '₹' + subtotal;
+    if (taxEl) taxEl.textContent = '₹' + tax;
+    if (totalEl) totalEl.textContent = '₹' + total;
+    document.getElementById('checkoutBtn')?.addEventListener('click', async function() {
+        if (!currentUser) { alert('Please login first'); return; }
+        if (Cart.items.length === 0) { alert('Cart is empty'); return; }
+        const slotSelect = document.getElementById('slotSelect');
+        const slot = slotSelect?.value || 'Lunch Break';
+        const items = Cart.items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty, image: i.image, lineTotal: i.price * i.qty }));
+        const order = {
+            studentName: currentUser.name, studentEmail: currentUser.email, studentId: currentUser.uid,
+            registerNumber: currentUser.registerNumber || '', department: currentUser.department || '', year: currentUser.year || '', phone: currentUser.phone || '',
+            items, slot, subtotal, tax, taxRate: 0.05, deliveryFee: 0, total: subtotal + tax,
+            billNumber: 'BILL-' + Date.now(), canteen: 'Food Court', canteenId: 'canteen',
+            status: 'pending', paymentMethod: 'cash', paymentStatus: 'pending',
+            createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()
+        };
+        try {
+            await addDoc(collection(db, 'orders'), order);
+            await setDoc(doc(db, 'users', currentUser.uid), { totalOrders: (currentUser.totalOrders || 0) + 1, totalSpent: (currentUser.totalSpent || 0) + order.total, updatedAt: serverTimestamp() }, { merge: true });
+            Cart.clear();
+            window.location.href = 'orders.html';
+        } catch(e) { alert('Checkout failed: ' + e.message); }
+    });
+}
+
+function initDashboardPage() {
+    updateDashboardStats();
+    const upcoming = allOrders.filter(o => o.studentId === currentUser?.uid && !['picked', 'cancelled'].includes(o.status));
+    const recentContainer = document.querySelector('.recent-orders-list');
+    if (recentContainer) {
+        if (upcoming.length === 0) { recentContainer.innerHTML = '<div class="empty-state"><p>No recent orders</p></div>'; }
+        else { recentContainer.innerHTML = upcoming.slice(0, 5).map(o => '<div class="order-card-mini"><span class="order-id">#' + (o.billNumber || o.id.slice(0,8)) + '</span><span class="status-badge status-badge--' + (o.status === 'pending' ? 'yellow' : 'blue') + '">' + o.status + '</span></div>').join(''); }
+    }
+}
+
+function animateCounter(el) {
+    const target = parseInt(el.textContent.replace(/[^\d]/g, '')) || 0;
+    if (target === 0) return;
+    let current = 0;
+    const step = Math.ceil(target / 30);
+    const timer = setInterval(() => { current += step; if (current >= target) { current = target; clearInterval(timer); } el.textContent = el.textContent.includes('₹') ? '₹' + current : current; }, 30);
 }

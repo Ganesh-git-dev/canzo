@@ -26,12 +26,12 @@
 - [x] Order details: bill number, line items, tax, payment status, student metadata
 - [x] Student stats auto-update on checkout (totalOrders, totalSpent)
 - [x] Canteen dashboard with live order queue, real-time stats, and peak hours chart
-- [x] Canteen menu management (CRUD + stock toggles) with Firestore
-- [x] Canteen orders table with status filters, slot filters, search, and tab navigation
+- [x] Canteen menu management (CRUD + stock toggles) with Firestore — stock toggles update student menu in real-time
+- [x] Canteen orders table with status filters, slot filters, search, and tab navigation (Active/Completed/Cancelled)
 - [x] Canteen analytics: revenue chart (7-day), top-selling items, student frequency, low-demand items — all calculated from Firestore
 - [x] Dark mode toggle (all pages, persists to localStorage)
 - [x] Cart persistence via localStorage (client-only state)
-- [x] Menu search + category tabs + filtering
+- [x] Menu search + category tabs + filtering (all categories functional)
 - [x] Order history + active orders for students (live from Firestore)
 - [x] Mobile responsive (sidebar toggle, stacked layouts, form rows collapse)
 - [x] Single canteen scope: "Food Court" at EASA College (Near Mess)
@@ -39,6 +39,10 @@
 - [x] Logout redirects to `login.html` on all pages
 - [x] All stat cards and analytics show real computed values (no mock data)
 - [x] Firestore security rules deployed
+- [x] Canteen open/close status toggle in dashboard header (syncs to Firestore, reflects on student end)
+- [x] Favorites page (`favorites.html`) with heart toggle on menu items
+- [x] Student settings page (`student-settings.html`) for profile management
+- [x] All mock data removed from HTML — everything rendered live from Firestore
 
 ---
 
@@ -50,33 +54,35 @@ D:\canzo\
 ├── login.html              # Login with Firebase Email/Password auth
 ├── register.html           # Student registration (name, email, reg#, dept, year, phone)
 ├── dashboard.html          # Student dashboard (real stats from Firestore)
-├── canteens.html           # Food Court card → links to menu
-├── menu.html               # Food menu (live from Firestore, search, categories)
-├── cart.html               # Shopping cart (localStorage) → checkout to Firestore
-├── orders.html             # Student orders (live Firestore listener)
-├── canteen-dashboard.html  # Canteen admin (stats, live order queue, peak hours)
-├── canteen-menu.html       # Canteen menu management (Firestore CRUD)
-├── canteen-orders.html     # Canteen order management (Firestore table, filters, tabs)
-├── canteen-analytics.html  # Canteen analytics (revenue chart, top items, frequency, low demand)
-├── canteen-settings.html   # Canteen settings (Firestore persistence, reset options)
-├── firestore.rules         # Firestore security rules (deployed)
-├── firebase.json           # Firebase project config
-├── package.json            # NPM scripts (seed, update-menu, deploy:rules)
-├── seed-database.js        # Node.js REST API seeder (users, menu, settings)
-├── update-menu.js          # Node.js script to update menu items
-├── README.md               # This file
+├── canteens.html          # Food Court card → links to menu
+├── menu.html              # Food menu (live from Firestore, search, categories)
+├── cart.html              # Shopping cart (localStorage) → checkout to Firestore
+├── orders.html            # Student orders (live Firestore listener)
+├── favorites.html         # Student favorites (heart toggle, add to cart)
+├── student-settings.html  # Student profile settings (Firestore persistence)
+├── canteen-dashboard.html # Canteen admin (stats, live order queue, peak hours, open/close toggle)
+├── canteen-menu.html      # Canteen menu management (Firestore CRUD, category tabs, stock toggle)
+├── canteen-orders.html    # Canteen order management (Firestore table, filters, tabs)
+├── canteen-analytics.html # Canteen analytics (revenue chart, top items, frequency, low demand)
+├── canteen-settings.html  # Canteen settings (Firestore persistence, reset options)
+├── firestore.rules        # Firestore security rules (deployed)
+├── firebase.json          # Firebase project config
+├── package.json          # NPM scripts (seed, update-menu, deploy:rules)
+├── seed-database.js      # Node.js REST API seeder (users, menu, settings)
+├── update-menu.js         # Node.js script to update menu items
+├── README.md             # This file
 ├── css/
-│   ├── style.css           # Landing page styles
-│   ├── app.css             # App pages + canteen admin styles
-│   ├── loading.css         # Loading screen animation
-│   └── cursor.css          # Fluid cursor effect
+│   ├── style.css         # Landing page styles
+│   ├── app.css           # App pages + canteen admin styles
+│   ├── loading.css       # Loading screen animation
+│   └── cursor.css       # Fluid cursor effect
 ├── js/
-│   ├── main.js             # GSAP animations for landing page
-│   ├── app.js              # ES module: Firebase Auth + Firestore + all UI logic
-│   ├── firebase-config.js  # Firebase SDK init (Auth + Firestore)
-│   ├── loading.js          # Loading screen animation
-│   ├── clock.js            # Real-time analog clock component
-│   └── cursor.js           # Fluid cursor trail effect
+│   ├── main.js           # GSAP animations for landing page
+│   ├── app.js            # ES module: Firebase Auth + Firestore + all UI logic
+│   ├── firebase-config.js # Firebase SDK init (Auth + Firestore)
+│   ├── loading.js        # Loading screen animation
+│   ├── clock.js          # Real-time analog clock component
+│   └── cursor.js        # Fluid cursor trail effect
 └── assets/
     └── images/             # Locally hosted menu item images
 ```
@@ -256,7 +262,7 @@ Student fields: name, email, register number, department, year, phone, password.
 Single card: Food Court → links to `menu.html`
 
 ### 6. Menu (`menu.html`)
-Live from Firestore `menuItems` collection. Search bar + category tabs. Add to cart with "Added ✓" feedback. Only in-stock items shown.
+Live from Firestore `menuItems` collection. Search bar + category tabs (All, Biryani, Pizza, Burgers, Drinks, Snacks, Desserts). Add to cart with "Added ✓" feedback. Only in-stock items shown. Favorites heart toggle on each item.
 
 ### 7. Cart (`cart.html`)
 localStorage cart. Item quantity controls (+/−), remove with slide animation. Summary shows subtotal, 5% tax, total. Checkout creates order in Firestore with full student metadata, bill number, and line item totals. Auto-updates `user.totalOrders` and `user.totalSpent`.
@@ -264,22 +270,29 @@ localStorage cart. Item quantity controls (+/−), remove with slide animation. 
 ### 8. Orders (`orders.html`)
 Live Firestore `onSnapshot` listener. Active orders (pending/accepted/preparing/ready) with status badges. Order history (picked/cancelled) with full details.
 
-### 9. Canteen Dashboard (`canteen-dashboard.html`)
+### 9. Favorites (`favorites.html`)
+Student favorites page — items added via heart icon on menu. Displays favorite items with "Add to Cart" button. Persisted to localStorage.
+
+### 10. Student Settings (`student-settings.html`)
+Edit student profile: name, phone, department, year, register number. Save to Firestore `users` collection. Theme toggle (light/dark). Clear cart and favorites buttons.
+
+### 11. Canteen Dashboard (`canteen-dashboard.html`)
 **Real stats from Firestore:**
 - **Today's Orders** — orders created today
 - **Today's Revenue** — sum of `total` from today's picked orders
 - **Active Orders** — count of pending/accepted/preparing/ready
 - **Total Orders** — all orders in system
-- **Live Order Queue** — real-time cards with Accept/Reject/Start Preparing/Mark Ready buttons
+- **Live Order Queue** — real-time cards with Accept/Reject/Preparing/Ready buttons
 - **Peak Hours Chart** — bar chart (all bars at 0% until data exists)
+- **Open/Close Toggle** — click to toggle canteen status in header, syncs to Firestore `settings/canteen` and reflects on student end
 
-### 10. Canteen Menu (`canteen-menu.html`)
-Full CRUD: add, edit, delete menu items via modal. Stock toggle switches. Category filter tabs. All changes sync to Firestore and student menu via `onSnapshot`.
+### 12. Canteen Menu (`canteen-menu.html`)
+Full CRUD: add, edit, delete menu items via modal. Stock toggle switches update student menu in real-time. Category filter tabs (All, Biryani, Pizza, Burgers, Drinks, Snacks, Desserts) — all functional. All changes sync to Firestore and student menu via `onSnapshot`.
 
-### 11. Canteen Orders (`canteen-orders.html`)
-Order table from Firestore with columns: Order ID, Student + Items, Slot, Total, Status dropdown, Status badge. Tab filters (Active/Completed/Cancelled). Status filter, slot filter, search input. Status dropdown updates Firestore in real-time.
+### 13. Canteen Orders (`canteen-orders.html`)
+Order table from Firestore with columns: Order ID, Student + Items, Slot, Total, Status dropdown, Status badge. Tab filters (Active/Completed/Cancelled) — all functional. Status filter, slot filter, search input. Status dropdown updates Firestore in real-time.
 
-### 12. Canteen Analytics (`canteen-analytics.html`)
+### 14. Canteen Analytics (`canteen-analytics.html`)
 **All computed from Firestore data:**
 - **Total Revenue** — sum of `total` from picked orders
 - **Total Orders** — count of all orders
@@ -290,7 +303,7 @@ Order table from Firestore with columns: Order ID, Student + Items, Slot, Total,
 - **Order Frequency** — unique students, avg orders/student, power users (5+ orders)
 - **Low Demand Items** — menu items with 0 orders
 
-### 13. Canteen Settings (`canteen-settings.html`)
+### 15. Canteen Settings (`canteen-settings.html`)
 Edit canteen name, location, auto-reject settings, max orders. Save to Firestore `settings/canteen`. Reset orders (clears all orders). Reset menu (restores default items).
 
 ---
@@ -315,9 +328,9 @@ Deployed to Vercel: `https://canzo-phi.vercel.app/`
 
 ```
 index.html → register.html → Firebase auth → dashboard.html (student)
-                                            → canteen-dashboard.html (admin)
+                                             → canteen-dashboard.html (admin)
 
-Student: dashboard → canteens → menu → cart → orders → (logout → login.html)
+Student: dashboard → canteens → menu → cart → orders → favorites → settings → (logout → login.html)
 Canteen: dashboard → menu → orders → analytics → settings → (logout → login.html)
 ```
 
@@ -347,6 +360,7 @@ Analytics: all computed from allOrders array (filtered by status, date, student,
 | `canzo_cart` | JSON array | Cart items `[{ id, name, price, image, qty }]` (client-only) |
 | `canzo_visited` | `'true'` | Loading screen skip flag |
 | `canzo_theme` | `'dark'` / `'light'` | Theme preference |
+| `canzo_favorites` | JSON array | Favorite items `[{ id, name, price, image }]` (client-only) |
 
 ---
 
