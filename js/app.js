@@ -671,7 +671,7 @@ function initStudentSettingsPage() {
 // ============================================
 
 function updateDashboardStats() {
-    const myOrders = currentUser ? allOrders.filter(o => o.userId === currentUser.uid) : [];
+    const myOrders = currentUser ? allOrders.filter(o => o.studentId === currentUser.uid) : [];
     const totalOrders = myOrders.length;
     const thisMonth = myOrders.filter(o => {
         const d = new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt);
