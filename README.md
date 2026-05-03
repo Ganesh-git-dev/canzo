@@ -445,4 +445,4 @@ Visit `http://localhost:8000`
 
 ---
 
-*Last updated: May 2, 2026 — Full end-to-end Firestore integration, real-time stats/analytics, logout → login redirect, centered auth logo, full-width form inputs, zero mock data*
+*Last updated: May 3, 2026 — Fixed Google Sign-In and email login event listeners; Google Sign-In now properly attached via initApp(); login/register forms use addEventListener instead of inline handlers; profile completion modal works for Google users; authorized domains: add localhost and canzo-phi.vercel.app in Firebase Console*

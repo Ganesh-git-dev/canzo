@@ -340,6 +340,18 @@ function initApp() {
         document.addEventListener('click', e => { if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && sidebar.classList.contains('open')) sidebar.classList.remove('open'); });
     }
 
+    // Attach auth form handlers
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) loginForm.addEventListener('submit', handleLogin);
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) registerForm.addEventListener('submit', handleRegister);
+
+    // Attach Google Sign-In button handlers
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    if (googleLoginBtn) googleLoginBtn.addEventListener('click', () => { console.log('Google login btn clicked'); handleGoogleLogin(); });
+    const googleRegisterBtn = document.getElementById('googleRegisterBtn');
+    if (googleRegisterBtn) googleRegisterBtn.addEventListener('click', () => { console.log('Google register btn clicked'); handleGoogleLogin(); });
+
     seedMenuIfEmpty(); listenToMenu(); listenToOrders(); loadCanteenSettings();
     initMenuPage(); initCartPage(); initDashboardPage(); initStudentOrders(); initStudentBills();
     initCanteenDashboard(); initCanteenMenu(); initCanteenOrders(); initCanteenBills(); initCanteenAnalytics(); initCanteenSettings();
