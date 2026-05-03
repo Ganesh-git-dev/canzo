@@ -12,7 +12,7 @@ import {
     GoogleAuthProvider,
     signOut,
     onAuthStateChanged
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js';
 import {
     collection,
     doc,
@@ -26,7 +26,7 @@ import {
     query,
     orderBy,
     serverTimestamp
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
 
 const STATUS_FLOW = ['accepted', 'preparing', 'prepared', 'delivered'];
 const STATUS_LABELS = { accepted: 'Accepted', preparing: 'Preparing', prepared: 'Prepared', delivered: 'Delivered' };
@@ -342,23 +342,10 @@ function initApp() {
     if (registerForm) registerForm.addEventListener('submit', handleRegister);
 
     // Attach Google Sign-In button handlers
-    // Google Sign-In handlers - attach to both login and register pages
     const googleLoginBtn = document.getElementById('googleLoginBtn');
-    if (googleLoginBtn) {
-        googleLoginBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log('Google login btn clicked');
-            handleGoogleLogin();
-        });
-    }
+    if (googleLoginBtn) googleLoginBtn.addEventListener('click', () => { console.log('Google login btn clicked'); handleGoogleLogin(); });
     const googleRegisterBtn = document.getElementById('googleRegisterBtn');
-    if (googleRegisterBtn) {
-        googleRegisterBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log('Google register btn clicked');
-            handleGoogleLogin();
-        });
-    }
+    if (googleRegisterBtn) googleRegisterBtn.addEventListener('click', () => { console.log('Google register btn clicked'); handleGoogleLogin(); });
 
     seedMenuIfEmpty(); listenToMenu(); listenToOrders(); loadCanteenSettings();
     initMenuPage(); initCartPage(); initDashboardPage(); initStudentOrders(); initStudentBills();
