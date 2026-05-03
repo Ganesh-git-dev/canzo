@@ -4,15 +4,16 @@
    Firebase Auth + Firestore for all data
    ============================================ */
 
+import { auth, db } from './firebase-config.js';
 import {
-    auth,
-    db,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signInWithPopup,
     GoogleAuthProvider,
     signOut,
-    onAuthStateChanged,
+    onAuthStateChanged
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {
     collection,
     doc,
     setDoc,
@@ -25,7 +26,7 @@ import {
     query,
     orderBy,
     serverTimestamp
-} from './firebase-config.js';
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const STATUS_FLOW = ['accepted', 'preparing', 'prepared', 'delivered'];
 const STATUS_LABELS = { accepted: 'Accepted', preparing: 'Preparing', prepared: 'Prepared', delivered: 'Delivered' };
@@ -120,6 +121,7 @@ onAuthStateChanged(auth, async (user) => {
             listenToMenu();
             listenToOrders();
             loadCanteenSettings();
+            listenToCanteenSettings();
         }
     } else { currentUser = null; }
 });
@@ -437,6 +439,28 @@ function listenToOrders() {
 async function loadCanteenSettings() {
     const d = await getDoc(doc(db, 'settings', 'canteen'));
     if (d.exists()) canteenSettings = { ...canteenSettings, ...d.data() };
+    updateCanteenStatusBadge();
+}
+
+function updateCanteenStatusBadge() {
+    const badge = document.getElementById('canteenStatusBadge');
+    if (!badge) return;
+    if (canteenSettings.isOpen) {
+        badge.textContent = 'Open Now';
+        badge.className = 'food-court-card-badge';
+    } else {
+        badge.textContent = 'Closed';
+        badge.className = 'food-court-card-badge food-court-card-badge--closed';
+    }
+}
+
+let canteenSettingsListener = null;
+function listenToCanteenSettings() {
+    if (canteenSettingsListener) return;
+    canteenSettingsListener = onSnapshot(doc(db, 'settings', 'canteen'), (d) => {
+        if (d.exists()) canteenSettings = { ...canteenSettings, ...d.data() };
+        updateCanteenStatusBadge();
+    });
 }
 
 // ============================================
