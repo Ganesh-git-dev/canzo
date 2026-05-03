@@ -1180,6 +1180,7 @@ function initCartPage() {
         if (cartSummary) cartSummary.style.display = 'none';
         return;
     }
+    if (cartSummary) cartSummary.style.display = '';
     cartItems.innerHTML = Cart.items.map(item =>
         '<div class="cart-item" data-id="' + item.id + '">' +
         '<div class="cart-item-image"><img src="' + item.image + '" alt="' + item.name + '"></div>' +
@@ -1199,27 +1200,31 @@ function initCartPage() {
     if (subtotalEl) subtotalEl.textContent = '₹' + subtotal;
     if (taxEl) taxEl.textContent = '₹' + tax;
     if (totalEl) totalEl.textContent = '₹' + total;
-    document.getElementById('checkoutBtn')?.addEventListener('click', async function() {
-        if (!currentUser) { alert('Please login first'); return; }
-        if (Cart.items.length === 0) { alert('Cart is empty'); return; }
-        const slotSelect = document.getElementById('cartSlot');
-        const slot = slotSelect?.value || 'Lunch Break';
-        const items = Cart.items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty, image: i.image, lineTotal: i.price * i.qty }));
-        const order = {
-            studentName: currentUser.name, studentEmail: currentUser.email, studentId: currentUser.uid,
-            registerNumber: currentUser.registerNumber || '', department: currentUser.department || '', year: currentUser.year || '', phone: currentUser.phone || '',
-            items, slot, subtotal, tax, taxRate: 0.05, deliveryFee: 0, total: subtotal + tax,
-            billNumber: 'BILL-' + Date.now(), canteen: 'Food Court', canteenId: 'canteen',
-            status: 'pending', paymentMethod: 'cash', paymentStatus: 'pending',
-            createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()
-        };
-        try {
-            await addDoc(collection(db, 'orders'), order);
-            await setDoc(doc(db, 'users', currentUser.uid), { totalOrders: (currentUser.totalOrders || 0) + 1, totalSpent: (currentUser.totalSpent || 0) + order.total, updatedAt: serverTimestamp() }, { merge: true });
-            Cart.clear();
-            window.location.href = 'orders.html';
-        } catch(e) { alert('Checkout failed: ' + e.message); }
-    });
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    if (checkoutBtn && !checkoutBtn.dataset.listenerAttached) {
+        checkoutBtn.dataset.listenerAttached = 'true';
+        checkoutBtn.addEventListener('click', async function() {
+            if (!currentUser) { alert('Please login first'); return; }
+            if (Cart.items.length === 0) { alert('Cart is empty'); return; }
+            const slotSelect = document.getElementById('cartSlot');
+            const slot = slotSelect?.value || 'Lunch Break';
+            const items = Cart.items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty, image: i.image, lineTotal: i.price * i.qty }));
+            const order = {
+                studentName: currentUser.name, studentEmail: currentUser.email, studentId: currentUser.uid,
+                registerNumber: currentUser.registerNumber || '', department: currentUser.department || '', year: currentUser.year || '', phone: currentUser.phone || '',
+                items, slot, subtotal, tax, taxRate: 0.05, deliveryFee: 0, total: subtotal + tax,
+                billNumber: 'BILL-' + Date.now(), canteen: 'Food Court', canteenId: 'canteen',
+                status: 'pending', paymentMethod: 'cash', paymentStatus: 'pending',
+                createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()
+            };
+            try {
+                await addDoc(collection(db, 'orders'), order);
+                await setDoc(doc(db, 'users', currentUser.uid), { totalOrders: (currentUser.totalOrders || 0) + 1, totalSpent: (currentUser.totalSpent || 0) + order.total, updatedAt: serverTimestamp() }, { merge: true });
+                Cart.clear();
+                window.location.href = 'orders.html';
+            } catch(e) { alert('Checkout failed: ' + e.message); }
+        });
+    }
 }
 
 // ============================================
