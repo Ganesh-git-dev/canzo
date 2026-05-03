@@ -376,6 +376,10 @@ if (document.readyState === 'loading') { document.addEventListener('DOMContentLo
 
 // FIX: merged duplicate renderMenuItems into a single function with optional filterCat param
 function renderMenuItems(container, filterCat) {
+    if (!canteenSettings.isOpen) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div><h3 class="empty-title">Canteen Closed</h3><p class="empty-text">No items available right now</p></div>';
+        return;
+    }
     Favorites.load();
     let items = menuItems.filter(i => i.inStock);
     if (filterCat && filterCat !== 'all') items = items.filter(i => i.category === filterCat);
@@ -451,6 +455,9 @@ function updateCanteenStatusBadge() {
         badge.textContent = 'Closed';
         badge.className = 'food-court-card-badge food-court-card-badge--closed';
     }
+    // Re-render menu if on menu page
+    const menuContainer = document.querySelector('.menu-items');
+    if (menuContainer) renderMenuItems(menuContainer, 'all');
 }
 
 let canteenSettingsListener = null;
