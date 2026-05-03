@@ -494,7 +494,7 @@ function renderCanteenOrdersIfActive() { const t = document.getElementById('cant
 function renderCanteenBillsIfActive() { const b = document.querySelector('.canteen-bills-list'); if (!b) return; initCanteenBills(); }
 
 function renderAnalyticsIfActive() {
-    const c = document.getElementById('analyticsRevenueChart');
+    const c = document.getElementById('analyticsTotalRevenue');
     const t = document.getElementById('analyticsTopItems');
     if (!c && !t) return;
     renderAnalytics(c, t, document.getElementById('analyticsFrequencyGrid'), document.getElementById('analyticsLowDemand'));
@@ -1104,7 +1104,7 @@ function initCanteenBills() {
 // ============================================
 
 function initCanteenAnalytics() {
-    const revenueChart = document.getElementById('analyticsRevenueChart');
+    const revenueChart = document.getElementById('analyticsTotalRevenue');
     const topItems = document.getElementById('analyticsTopItems');
     const freqGrid = document.getElementById('analyticsFrequencyGrid');
     const lowDemand = document.getElementById('analyticsLowDemand');
@@ -1112,27 +1112,23 @@ function initCanteenAnalytics() {
     renderAnalytics(revenueChart, topItems, freqGrid, lowDemand);
 }
 
-function renderAnalytics(revenueChart, topItemsEl, freqGrid, lowDemandEl) {
-    // Revenue by day (last 7 days)
-    if (revenueChart) {
-        const days = [];
-        for (let i = 6; i >= 0; i--) {
-            const d = new Date(); d.setDate(d.getDate() - i); d.setHours(0, 0, 0, 0);
-            const next = new Date(d); next.setDate(next.getDate() + 1);
-            const rev = allOrders
-                .filter(o => o.status === 'picked')
-                .filter(o => { const t = new Date(o.createdAt?.seconds ? o.createdAt.seconds * 1000 : o.createdAt); return t >= d && t < next; })
-                .reduce((s, o) => s + (o.total || 0), 0);
-            days.push({ label: d.toLocaleDateString('en-IN', { weekday: 'short' }), rev });
-        }
-        const max = Math.max(...days.map(d => d.rev), 1);
-        revenueChart.innerHTML = '<div class="analytics-bar-chart">' +
-            days.map(d =>
-                '<div class="analytics-bar-col">' +
-                '<div class="analytics-bar" style="height:' + Math.round((d.rev / max) * 120) + 'px" title="₹' + d.rev + '"></div>' +
-                '<span class="analytics-bar-label">' + d.label + '</span>' +
-                '<span class="analytics-bar-val">₹' + d.rev + '</span></div>'
-            ).join('') + '</div>';
+function renderAnalytics(revenueEl, topItemsEl, freqGrid, lowDemandEl) {
+    // Total Revenue
+    if (revenueEl) {
+        const totalRev = allOrders.filter(o => o.status === 'picked').reduce((s, o) => s + (o.total || 0), 0);
+        revenueEl.textContent = '₹' + totalRev;
+    }
+
+    // Total Orders
+    const totalOrdersEl = document.getElementById('analyticsTotalOrders');
+    if (totalOrdersEl) totalOrdersEl.textContent = allOrders.length;
+
+    // Avg Order Value
+    const avgOrderEl = document.getElementById('analyticsAvgOrder');
+    if (avgOrderEl) {
+        const totalRev = allOrders.filter(o => o.status === 'picked').reduce((s, o) => s + (o.total || 0), 0);
+        const avg = allOrders.length > 0 ? Math.round(totalRev / allOrders.length) : 0;
+        avgOrderEl.textContent = '₹' + avg;
     }
 
     // Top items by order count
