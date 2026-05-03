@@ -697,24 +697,18 @@ function updateDashboardStats() {
 // ============================================
 
 function initMenuPage() {
-    const catContainer = document.querySelector('.menu-categories');
+    const catBtns = document.querySelectorAll('.menu-categories .menu-category-btn');
     const itemsContainer = document.querySelector('.menu-items');
-    if (!catContainer || !itemsContainer) return;
+    if (!catBtns.length || !itemsContainer) return;
     Favorites.load(); Cart.load();
-    function buildTabs() {
-        const cats = ['all', ...new Set(menuItems.map(i => i.category))];
-        const labels = { all: 'All', biryani: 'Biryani', pizza: 'Pizza', burgers: 'Burgers', drinks: 'Drinks', snacks: 'Snacks', desserts: 'Desserts', 'short-bites': 'Short Bites', pastry: 'Pastry', maggie: 'Maggie', 'fried-rice': 'Fried Rice', juices: 'Juices' };
-        catContainer.innerHTML = cats.map(c => '<button class="menu-category-btn' + (c === 'all' ? ' active' : '') + '" data-category="' + c + '">' + (labels[c] || c) + '</button>').join('');
-        catContainer.querySelectorAll('.menu-category-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                catContainer.querySelectorAll('.menu-category-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                renderMenuItems(itemsContainer, this.dataset.category);
-            });
-        });
-    }
-    buildTabs();
     renderMenuItems(itemsContainer, 'all');
+    catBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            catBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            renderMenuItems(itemsContainer, this.dataset.category);
+        });
+    });
     const searchInput = document.getElementById('menuSearchInput');
     if (searchInput) {
         searchInput.addEventListener('input', function() {
