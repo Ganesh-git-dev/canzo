@@ -39,9 +39,13 @@
 - [x] Logout redirects to `login.html` on all pages
 - [x] All stat cards and analytics show real computed values (no mock data)
 - [x] Firestore security rules deployed
-- [x] Canteen open/close status toggle in dashboard header (syncs to Firestore, reflects on student end)
-- [x] Favorites page (`favorites.html`) with heart toggle on menu items
-- [x] Student settings page (`student-settings.html`) for profile management
+- [x] Canteen open/close status toggle in dashboard header (syncs to Firestore `settings/canteen`, reflects on student end)
+- [x] Show "Canteen Closed" message on menu page when canteen is closed
+- [x] Favorites page (`favorites.html`) with heart toggle on menu items (small icon beside Add to Cart)
+- [x] Student settings page (`student-settings.html`) pre-fills from Firestore (name, department, year, phone, registerNumber)
+- [x] Cart page fixed: proper item rendering, qty controls, checkout flow
+- [x] Student dashboard stats fixed: uses `studentId` field, shows real order counts
+- [x] Canteen analytics fixed: stat cards (total revenue, orders, avg order value)
 - [x] All mock data removed from HTML — everything rendered live from Firestore
 
 ---
